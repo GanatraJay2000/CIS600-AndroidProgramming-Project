@@ -1,5 +1,6 @@
 package com.example.project
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -16,8 +17,12 @@ import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.example.project.databinding.ActivityMainBinding
+import com.example.project.auth.LoginActivity
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class MainActivity : AppCompatActivity() {
+    private val auth = Firebase.auth
     private lateinit var navController:NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -27,11 +32,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        checkUserSignedIn()
+
         setSupportActionBar(binding.appBarMain.toolbar)
 
         binding.appBarMain.fab.setOnClickListener { view ->
             showContextMenu(view)
         }
+
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -39,8 +47,6 @@ class MainActivity : AppCompatActivity() {
             navController.graph = navController.navInflater.inflate(R.navigation.mobile_navigation)
         }
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
@@ -53,6 +59,13 @@ class MainActivity : AppCompatActivity() {
             navigateToDestination(menuItem.itemId)
             drawerLayout.closeDrawer(GravityCompat.START)
             true
+        }
+    }
+
+    private fun checkUserSignedIn() {
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 
