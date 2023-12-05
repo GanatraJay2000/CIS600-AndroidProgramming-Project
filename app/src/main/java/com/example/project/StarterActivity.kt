@@ -5,10 +5,46 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.preference.PreferenceManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import com.example.project.auth.LoginActivity
+import com.example.project.onboarding.WelcomeActivity
 
+
+class StarterActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_starter)
+
+        val imageView = findViewById<ImageView>(R.id.animationImageView)
+        val rotateAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_around_center)
+        imageView.startAnimation(rotateAnimation)
+
+        // Determine if this is the first time running the app
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val isFirstRun = prefs.getBoolean("isFirstRun", true)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            imageView.clearAnimation()
+            if (isFirstRun) {
+                // Update the isFirstRun flag so this path is not taken again
+                prefs.edit().putBoolean("isFirstRun", false).apply()
+
+                // Go to WelcomeActivity since this is the first run
+                val welcomeIntent = Intent(this, WelcomeActivity::class.java)
+                startActivity(welcomeIntent)
+            } else {
+                // Go to MainActivity since this is not the first run
+                val mainIntent = Intent(this, MainActivity::class.java)
+                startActivity(mainIntent)
+            }
+            finish()
+        }, 3000)
+    }
+}
+
+/*
 class StarterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,4 +61,4 @@ class StarterActivity : AppCompatActivity() {
             finish()
         }, 3000)
     }
-}
+}*/

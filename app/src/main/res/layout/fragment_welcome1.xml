@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Layout for the first welcome screen -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/welcomeImage1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_page1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:adjustViewBounds="true"
+        />
+
+    <TextView
+        android:id="@+id/welcomeTitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Make your own private travel plan"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/welcomeImage1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/welcomeSubtitle1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Formulate your strategy to receive wonderful gift packs"
+        android:textColor="#666"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/welcomeTitle1"
+        app:layout_constraintStart_toStartOf="@+id/welcomeTitle1"
+        app:layout_constraintTop_toBottomOf="@id/welcomeTitle1" />
+
+    <ImageButton
+        android:id="@+id/btn_welcomeP1"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:background="?android:selectableItemBackground"
+        android:padding="16dp"
+        android:src="@drawable/ic_viewpager_next_btn"
+        app:layout_constraintBottom_toTopOf="@id/skipText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcomeSubtitle1"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <TextView
+        android:id="@+id/skipText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Skip"
+        android:textSize="16sp"
+        android:textColor="#666"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="16dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
