@@ -28,4 +28,7 @@
     <string name="register">Register</string>
     <string name="sign_up_free">Sign Up Free</string>
     <string name="logout">Logout</string>
+    <string name="title_home">Home</string>
+    <string name="title_add">Add</string>
+    <string name="title_profile">Profile</string>
 </resources>

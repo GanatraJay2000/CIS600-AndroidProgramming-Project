@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
 import com.example.project.MainActivity
 import com.example.project.R
 

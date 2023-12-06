@@ -44,11 +44,5 @@ class WelcomeFragment1 : Fragment() {
 
     companion object {
 
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            WelcomeFragment1().apply {
-                arguments = Bundle().apply {
-                }
-            }
     }
 }

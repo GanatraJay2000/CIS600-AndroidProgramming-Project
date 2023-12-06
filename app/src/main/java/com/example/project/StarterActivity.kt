@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.project
 
 import android.content.Intent
@@ -8,7 +10,6 @@ import android.os.Looper
 import android.preference.PreferenceManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import com.example.project.auth.LoginActivity
 import com.example.project.onboarding.WelcomeActivity
 
 

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import com.google.android.material.navigation.NavigationView
@@ -19,16 +20,18 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import com.example.project.databinding.ActivityMainBinding
 import com.example.project.auth.LoginActivity
-import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 class MainActivity : AppCompatActivity() {
-    private val auth = Firebase.auth
+    private val auth = com.google.firebase.Firebase.auth
     private lateinit var navController:NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var drawer_layout: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //drawer_layout = findViewById(R.id.drawer_layout)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -105,6 +108,17 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
+
+    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                drawer_layout.openDrawer(GravityCompat.START)
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }*/
+
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
