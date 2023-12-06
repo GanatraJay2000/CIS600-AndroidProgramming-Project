@@ -2,6 +2,7 @@ package com.example.project
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.PopupMenu
@@ -43,7 +44,18 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_main)
+
+
+
+        // logout when clicking logout button
+        navView.menu.findItem(R.id.logout).setOnMenuItemClickListener {
+            signOut()
+            true
+        }
+
+        // reset navController graph when navigating
         navController.addOnDestinationChangedListener { _, _, _ ->
+            checkUserSignedIn()
             navController.graph = navController.navInflater.inflate(R.navigation.mobile_navigation)
         }
 
@@ -62,14 +74,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkUserSignedIn() {
+    public fun signOut() {
+        auth.signOut()
+        startActivity(Intent(this, LoginActivity::class.java))
+    }
+
+    public fun checkUserSignedIn() {
         val currentUser = auth.currentUser
+        Log.v("MainActivity", "Current user: $currentUser")
         if (currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 
-    private fun navigateToDestination(destinationId: Int) {
+    public fun navigateToDestination(destinationId: Int) {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         val currentDestination = navController.currentDestination?.id
 

@@ -27,4 +27,5 @@
     <string name="existing_user_sign_in">Existing User? Sign In</string>
     <string name="register">Register</string>
     <string name="sign_up_free">Sign Up Free</string>
+    <string name="logout">Logout</string>
 </resources>

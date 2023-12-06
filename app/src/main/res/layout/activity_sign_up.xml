@@ -42,9 +42,11 @@
         app:boxCornerRadiusBottomStart="50dp"
         app:boxCornerRadiusTopEnd="50dp"
         app:boxCornerRadiusTopStart="50dp"
+        android:imeOptions="actionNext"
         android:layout_marginTop="0dp"
         android:hint="@string/enter_your_email_address"
         android:inputType="textEmailAddress"
+        android:maxLines="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
@@ -67,7 +69,7 @@
 
 
     <com.google.android.material.textfield.TextInputLayout
-        app:startIconDrawable="@drawable/baseline_alternate_email_24"
+        app:startIconDrawable="@drawable/key"
         android:id="@+id/password_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,6 +81,8 @@
         app:boxCornerRadiusTopStart="50dp"
         android:layout_marginTop="0dp"
         android:hint="@string/enter_your_password"
+        android:maxLines="1"
+        android:imeOptions="actionNext"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
