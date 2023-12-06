@@ -7,6 +7,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+//import android.widget.Toolbar
+import androidx.appcompat.app.ActionBarDrawerToggle
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -21,6 +23,8 @@ import androidx.navigation.NavOptions
 import com.example.project.databinding.ActivityMainBinding
 import com.example.project.auth.LoginActivity
 import com.google.firebase.auth.auth
+import androidx.appcompat.widget.Toolbar
+
 
 class MainActivity : AppCompatActivity() {
     private val auth = com.google.firebase.Firebase.auth
@@ -33,12 +37,16 @@ class MainActivity : AppCompatActivity() {
 
         //drawer_layout = findViewById(R.id.drawer_layout)
 
+
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         checkUserSignedIn()
 
         setSupportActionBar(binding.appBarMain.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_navigation)
 
         binding.appBarMain.fab.setOnClickListener { view ->
             showContextMenu(view)
@@ -47,8 +55,6 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_main)
-
-
 
         // logout when clicking logout button
         navView.menu.findItem(R.id.logout).setOnMenuItemClickListener {

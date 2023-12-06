@@ -26,7 +26,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:menu="@menu/bottom_navigation_menu"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/rounded_bottom_navigation"/>
 
         <!-- Toolbar and other content must be defined inside app_bar_main.xml -->
 
@@ -39,6 +40,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        app:menu="@menu/activity_main_drawer"
+        app:itemIconTint="@null"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

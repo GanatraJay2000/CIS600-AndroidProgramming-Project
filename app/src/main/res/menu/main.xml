@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:icon="@drawable/baseline_people_24"
+        android:icon="@drawable/ic_notification"
         android:title="@string/action_followers"
         app:showAsAction="always" />
 </menu>
