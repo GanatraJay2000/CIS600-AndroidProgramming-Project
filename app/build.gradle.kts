@@ -56,6 +56,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-common-ktx:20.4.2")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
 
 
     testImplementation("junit:junit:4.13.2")

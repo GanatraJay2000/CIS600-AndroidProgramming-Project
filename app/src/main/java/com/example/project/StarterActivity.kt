@@ -41,7 +41,7 @@ class StarterActivity : AppCompatActivity() {
                 startActivity(mainIntent)
             }
             finish()
-        }, 3000)
+        }, 1500)
     }
 }
 

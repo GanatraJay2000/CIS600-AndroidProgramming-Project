@@ -1,5 +1,6 @@
 package com.example.project
 
+//import android.widget.Toolbar
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,23 +8,21 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
-//import android.widget.Toolbar
-import androidx.appcompat.app.ActionBarDrawerToggle
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
-import androidx.navigation.NavController
-import androidx.navigation.NavOptions
-import com.example.project.databinding.ActivityMainBinding
 import com.example.project.auth.LoginActivity
+import com.example.project.databinding.ActivityMainBinding
+import com.example.project.helpers.SearchBottomSheetFragment
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.auth
-import androidx.appcompat.widget.Toolbar
 
 
 class MainActivity : AppCompatActivity() {
@@ -73,6 +72,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
             ), drawerLayout
         )
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -96,13 +96,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    public fun navigateToDestination(destinationId: Int) {
+    fun navigateToDestination(destinationId: Int) {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         val currentDestination = navController.currentDestination?.id
 
         if (currentDestination != destinationId) {
             val navOptions = NavOptions.Builder()
                 .setPopUpTo(navController.graph.startDestinationId, false)
+                .setEnterAnim(R.anim.slide_in_right)
+                .setExitAnim(R.anim.slide_out_left)
                 .build()
             navController.navigate(destinationId, null, navOptions)
         }
@@ -115,15 +117,16 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> {
-                drawer_layout.openDrawer(GravityCompat.START)
+            R.id.app_bar_search -> {
+                val searchBottomSheetFragment = SearchBottomSheetFragment()
+                searchBottomSheetFragment.show(supportFragmentManager, searchBottomSheetFragment.tag)
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
-    }*/
+    }
 
 
     override fun onSupportNavigateUp(): Boolean {
@@ -150,5 +153,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         popupMenu.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        signOut()
     }
 }

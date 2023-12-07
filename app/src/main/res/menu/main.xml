@@ -2,9 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/app_bar_search"
+        android:icon="@drawable/search"
         android:orderInCategory="100"
-        android:icon="@drawable/ic_notification"
+        android:title="Search"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="101"
+        android:icon="@drawable/baseline_people_24"
         android:title="@string/action_followers"
         app:showAsAction="always" />
 </menu>
