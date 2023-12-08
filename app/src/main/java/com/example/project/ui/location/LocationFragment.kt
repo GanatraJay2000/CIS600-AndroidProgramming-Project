@@ -1,13 +1,20 @@
 package com.example.project.ui.location
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.project.R
+import com.example.project.adapters.PopularPlacesAdapter
 import com.example.project.databinding.FragmentLocationBinding
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.OpeningHours
 import com.google.android.libraries.places.api.model.PhotoMetadata
@@ -15,7 +22,16 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPhotoRequest
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FetchPlaceResponse
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
+import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.api.model.RectangularBounds
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+
 
 class LocationFragment : Fragment() {
     private var _binding: FragmentLocationBinding? = null
@@ -24,16 +40,30 @@ class LocationFragment : Fragment() {
     private lateinit var place: Place
     private lateinit var placeDetails: PlaceDetails
     private lateinit var placesClient: PlacesClient
+    private var latitude: Double? = null
+    private var longitude: Double? = null
+
+    private lateinit var popularPlacesAdapter: PopularPlacesAdapter
+    private var nearbyPlacesList = mutableListOf<Place>()
 
     companion object {
         private const val ARG_PLACE = "place"
         private const val ARG_POPULAR_PLACES = "popularPlaces"
+        private const val ARG_LATITUDE = "latitude"
+        private const val ARG_LONGITUDE = "longitude"
 
-        fun newInstance(place: Place, popularPlaces: List<String>): LocationFragment {
+        fun newInstance(
+            place: Place,
+            popularPlaces: List<String>,
+            latitude: Double?,
+            longitude: Double?
+        ): LocationFragment {
             val fragment = LocationFragment()
             val args = Bundle().apply {
                 putParcelable(ARG_PLACE, place)
                 putStringArrayList(ARG_POPULAR_PLACES, ArrayList(popularPlaces))
+                putDouble(ARG_LATITUDE, latitude ?: 0.0)
+                putDouble(ARG_LONGITUDE, longitude ?: 0.0)
             }
             fragment.arguments = args
             return fragment
@@ -45,6 +75,8 @@ class LocationFragment : Fragment() {
         arguments?.let {
             place = it.getParcelable(ARG_PLACE) ?: throw IllegalStateException("Place data is required.")
             val popularPlaces = it.getStringArrayList(ARG_POPULAR_PLACES) ?: emptyList<String>()
+            latitude = it.getDouble(ARG_LATITUDE)
+            longitude = it.getDouble(ARG_LONGITUDE)
             placeDetails = PlaceDetails(
                 name = place.name,
                 address = place.address,
@@ -67,11 +99,39 @@ class LocationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Initialize Places API
-        Places.initialize(requireContext(), "AIzaSyBvQIUByA2GmXPnNMZ51hNtVHDhBLMAvoI")
+        Places.initialize(requireContext(), getString(R.string.google_maps_key)) // Replace with your API key
         placesClient = Places.createClient(requireContext())
 
         // Now set the values in your UI components
         updateUIWithPlaceDetails(placeDetails)
+        place.id?.let { latitude?.let { it1 -> longitude?.let { it2 -> logNearbyPlaces(it1.toDouble(), it2.toDouble()) } } }
+        logPopularPlaces(placeDetails.popularPlaces)
+
+        setupRecyclerView()
+
+        // Fetch and display nearby places
+        fetchNearbyPlaces()
+    }
+
+    private fun setupRecyclerView() {
+        popularPlacesAdapter = PopularPlacesAdapter(nearbyPlacesList)
+        binding.popularPlacesRecyclerView.layoutManager = LinearLayoutManager(context)
+        binding.popularPlacesRecyclerView.adapter = popularPlacesAdapter
+    }
+
+    private fun fetchNearbyPlaces() {
+        // Define location parameters
+        val locationBias = RectangularBounds.newInstance(
+            LatLng(latitude ?: (0.0 - 0.1), longitude ?: (0.0 - 0.1)),
+            LatLng(latitude ?: (0.0 + 0.1), longitude ?: (0.0 + 0.1))
+        )
+
+        // Fetch places using Google Places API and update RecyclerView
+        // This is a simplification. In a real app, you would make an API call.
+        // For each place fetched, add it to `nearbyPlacesList` and update the adapter.
+        // For example:
+        // nearbyPlacesList.add(fetchedPlace)
+        // popularPlacesAdapter.notifyDataSetChanged()
     }
 
     private fun fetchPlaceDetails(placeId: String) {
@@ -105,7 +165,6 @@ class LocationFragment : Fragment() {
                     place.rating,
                     place.editorialSummary,
                     popularPlaces = it // Replace with actual popular places
-
                 )
             }!!
 
@@ -187,7 +246,104 @@ class LocationFragment : Fragment() {
         } else {
             binding.placeAttractionsTextView.visibility = View.GONE
         }
+    }
 
+    private fun logNearbyPlaces(latitude: Double, longitude: Double) {
+        // Define the types of nearby places you want to include (e.g., tourist attractions, museums, restaurants)
+        val nearbyPlaceTypes = listOf(Place.Field.TYPES) // You can specify more fields as needed
+
+        // Define the location bias based on latitude and longitude
+        val locationBias = RectangularBounds.newInstance(
+            LatLng(latitude - 0.1, longitude - 0.1), // Adjust the values as needed
+            LatLng(latitude + 0.1, longitude + 0.1)  // Adjust the values as needed
+        )
+
+        val request = FindCurrentPlaceRequest.builder(nearbyPlaceTypes)
+            .build()
+
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Handle permission request
+            // TODO: Request location permissions here
+            return
+        }
+
+        placesClient.findCurrentPlace(request)
+            .addOnSuccessListener { response: FindCurrentPlaceResponse ->
+                val nearbyPlaces = response.placeLikelihoods
+
+                // Extract nearby places and popular attractions from the response
+                val nearbyPopularPlaces = mutableListOf<String>()
+
+                for (likelihood in nearbyPlaces) {
+                    val place = likelihood.place
+                    val placeName = place.name
+                    if (placeName != null) {
+                        nearbyPopularPlaces.add(placeName)
+                    }
+                }
+
+                // Update the UI with nearby popular places
+                updateNearbyPopularPlaces(nearbyPopularPlaces)
+            }
+            .addOnFailureListener { exception: Exception ->
+                if (exception is ApiException) {
+                    val statusCode = exception.statusCode
+                    Log.e("LocationFragment", "Nearby places search failed: ${exception.message}, statusCode: $statusCode")
+                }
+            }
+    }
+
+
+
+    private fun logPopularPlaces(popularPlaces: List<String>) {
+        // Log popular places
+        Log.d("LocationFragment1", "Popular places nearby: ${popularPlaces.joinToString(", ")}")
+    }
+
+    private fun updateNearbyPopularPlaces(placeIds: List<String>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            // Clear the existing list
+            nearbyPlacesList.clear()
+
+            placeIds.forEach { placeId ->
+                // Fetch details for each place ID
+                val placeFields = listOf(
+                    Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS,
+                    Place.Field.LAT_LNG, Place.Field.PHOTO_METADATAS
+                    // Add other fields you need
+                )
+
+                val request = FetchPlaceRequest.newInstance(placeId, placeFields)
+                try {
+                    val response = placesClient.fetchPlace(request).await()
+                    val place = response.place
+
+                    // Add the fetched place to the list
+                    nearbyPlacesList.add(place)
+                } catch (e: ApiException) {
+                    Log.e("LocationFragment", "Error fetching place details: ${e.message}")
+                }
+            }
+
+            // Update the RecyclerView on the main thread
+            withContext(Dispatchers.Main) {
+                popularPlacesAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
 
