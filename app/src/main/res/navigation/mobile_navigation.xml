@@ -32,4 +32,13 @@
         android:name="com.example.project.auth.SignUpActivity"
         android:label="activity_sign_up"
         tools:layout="@layout/activity_sign_up" />
+    <fragment
+        android:id="@+id/locationFragment"
+        android:name="com.example.project.ui.location.LocationFragment"
+        android:label="fragment_location"
+        tools:layout="@layout/fragment_location">
+        <argument
+            android:name="locationId"
+            app:argType="integer"/>
+    </fragment>
 </navigation>

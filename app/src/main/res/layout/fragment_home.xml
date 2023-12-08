@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#eeeeee"
     tools:context=".ui.home.HomeFragment">
 
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dashboardBanner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,5 +72,72 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <TextView
+        android:id="@+id/topLocationsTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_marginStart="8dp"
+        android:text="Top Locations"
+        android:textColor="#000"
+        android:textFontWeight="500"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dashboardBanner" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginStart="8dp"
+        android:id="@+id/dashboardTopLocations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topLocationsTitle" />
+
+    <TextView
+        android:id="@+id/spotsNearMeTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_marginStart="8dp"
+        android:text="Tourism Spots near you"
+        android:textColor="#000"
+        android:textFontWeight="500"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dashboardFeaturedGuides" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginStart="8dp"
+        android:id="@+id/dashboardSpotsNearMe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spotsNearMeTitle" />
+
+    <TextView
+        android:id="@+id/featuredGuidesTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_marginStart="8dp"
+        android:text="Featured Guides from users"
+        android:textColor="#000"
+        android:textFontWeight="500"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dashboardTopLocations" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginStart="8dp"
+        android:id="@+id/dashboardFeaturedGuides"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/featuredGuidesTitle" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
