@@ -4,22 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavOptions
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.project.R
 import com.example.project.databinding.FragmentHomeBinding
+import com.example.project.models.Guide
+import com.example.project.models.Location
+import com.example.project.models.dummyGuides
+import com.example.project.models.dummyLocations
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -34,6 +33,30 @@ class HomeFragment : Fragment() {
         binding.cypButton.setOnClickListener {
             navigateToDestination(R.id.nav_slideshow)
         }
+
+        //  Featured Guides
+        val guidesList = dummyGuides
+        val flAdapter = FeaturedGuidesAdapter(guidesList)
+        val flRecyclerView = binding.dashboardFeaturedGuides
+        flRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        flRecyclerView.adapter = flAdapter
+
+
+        val locationsList = dummyLocations
+        val tlAdapter  = TopLocationsAdapter(locationsList) { locationId ->
+            navigateToDestination(R.id.locationFragment, locationId)
+        }
+        val tlRecyclerView = binding.dashboardTopLocations
+        tlRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        tlRecyclerView.adapter = tlAdapter
+
+        val spotsList = dummyLocations
+        val snmAdapter = TopLocationsAdapter(locationsList) { locationId ->
+            navigateToDestination(R.id.locationFragment, locationId)
+        }
+        val snmRecyclerView = binding.dashboardSpotsNearMe
+        snmRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        snmRecyclerView.adapter = snmAdapter
 
         return root
     }
@@ -54,6 +77,20 @@ class HomeFragment : Fragment() {
                 .setExitAnim(R.anim.slide_out_left)
                 .build()
             navController.navigate(destinationId, null, navOptions)
+        }
+    }
+    fun navigateToDestination(destinationId: Int, locationId: Int) {
+        val navController = findNavController()
+        val currentDestination = navController.currentDestination?.id
+
+        if (currentDestination != destinationId) {
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(navController.graph.startDestinationId, false)
+                .setEnterAnim(R.anim.slide_in_right)
+                .setExitAnim(R.anim.slide_out_left)
+                .build()
+            val bundle = Bundle().apply { putInt("locationId", locationId) }
+            navController.navigate(destinationId, bundle, navOptions)
         }
     }
 }
