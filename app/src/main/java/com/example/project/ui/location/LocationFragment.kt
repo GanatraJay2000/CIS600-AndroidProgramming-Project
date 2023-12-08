@@ -33,10 +33,6 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.net.URLEncoder
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
 
@@ -132,7 +128,7 @@ class LocationFragment : Fragment() {
 
         val locationName = arguments?.getString(ARG_LOCATION_NAME)
         if (!locationName.isNullOrEmpty()) {
-            searchPlacesByName(locationName)
+            //searchPlacesByName(locationName)
         }
     }
 
@@ -316,7 +312,7 @@ class LocationFragment : Fragment() {
             }
     }
 
-    private fun searchPlacesByName(locationName: String) {
+    /*private fun searchPlacesByName(locationName: String) {
         val apiKey = getString(R.string.google_maps_key) // Replace with your actual API key
         val language = "en"
         val fields = "name,formatted_address,photos,types,opening_hours,rating" // Specify the fields you want
@@ -354,7 +350,7 @@ class LocationFragment : Fragment() {
                 Log.e("LocationFragment", "Error searching places: ${e.message}", e)
             }
         }
-    }
+    }*/
 
 
     private fun logPopularPlaces(popularPlaceIds: List<String>) {
