@@ -25,14 +25,15 @@ class LocationFragment : Fragment() {
     private lateinit var placeDetails: PlaceDetails
     private lateinit var placesClient: PlacesClient
 
-
     companion object {
         private const val ARG_PLACE = "place"
+        private const val ARG_POPULAR_PLACES = "popularPlaces"
 
-        fun newInstance(place: Place): LocationFragment {
+        fun newInstance(place: Place, popularPlaces: List<String>): LocationFragment {
             val fragment = LocationFragment()
             val args = Bundle().apply {
                 putParcelable(ARG_PLACE, place)
+                putStringArrayList(ARG_POPULAR_PLACES, ArrayList(popularPlaces))
             }
             fragment.arguments = args
             return fragment
@@ -43,6 +44,17 @@ class LocationFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             place = it.getParcelable(ARG_PLACE) ?: throw IllegalStateException("Place data is required.")
+            val popularPlaces = it.getStringArrayList(ARG_POPULAR_PLACES) ?: emptyList<String>()
+            placeDetails = PlaceDetails(
+                name = place.name,
+                address = place.address,
+                photoMetadatas = place.photoMetadatas,
+                types = place.types,
+                openingHours = place.openingHours,
+                rating = place.rating,
+                description = place.editorialSummary,
+                popularPlaces = popularPlaces
+            )
         }
     }
 
@@ -54,46 +66,19 @@ class LocationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize Places API
         Places.initialize(requireContext(), "AIzaSyBvQIUByA2GmXPnNMZ51hNtVHDhBLMAvoI")
-
-        // Create the PlacesClient
         placesClient = Places.createClient(requireContext())
 
-
-        // Fetch additional place details
-        place.id?.let { fetchPlaceDetails(it) }
-
-        // Populate the UI with basic place details
-        binding.placeNameTextView.text = place.name
-        binding.placeAddressTextView.text = place.address
-        binding.placeDescriptionTextView.text = place.editorialSummary
-        binding.placeAttractionsTextView.text = place.types?.joinToString(", ") { it.name } ?: ""
-        binding.ratingBar.rating = place.rating?.toFloat() ?: 0f
-        binding.openingHoursTextView.text = place.openingHours?.weekdayText?.joinToString("\n") ?: ""
-
-        Log.d("LocationFragment", "Place Name: ${place.name}")
-        Log.d("LocationFragment", "Place Address: ${place.address}")
-        Log.d("LocationFragment", "Place Description: ${place.editorialSummary}")
-        Log.d("LocationFragment", "Place Attractions: ${place.types?.joinToString(", ") { it.name } ?: ""}")
-        Log.d("LocationFragment", "Place Rating: ${place.rating?.toFloat() ?: 0f}")
-        Log.d("LocationFragment", "Opening Hours: ${place.openingHours?.weekdayText?.joinToString("\n") ?: ""}")
-
-// Now set the values in your UI components
-        binding.placeNameTextView.text = place.name
-        binding.placeAddressTextView.text = place.address
-        binding.placeDescriptionTextView.text = place.editorialSummary
-        binding.placeAttractionsTextView.text = place.types?.joinToString(", ") { it.name } ?: ""
-        binding.ratingBar.rating = place.rating?.toFloat() ?: 0f
-        binding.openingHoursTextView.text = place.openingHours?.weekdayText?.joinToString("\n") ?: ""
-
-        // Here, you can add more UI updates for other basic place details
-
-        // Example: If you have an ImageView for the place's image, you can load the image here
-        // Example: If you have a TextView for a description, you can set its text here
+        // Now set the values in your UI components
+        updateUIWithPlaceDetails(placeDetails)
     }
 
     private fun fetchPlaceDetails(placeId: String) {
         // Define the fields you want to retrieve for place details
+        val popularPlaceTypes = listOf(Place.Type.RESTAURANT, Place.Type.MUSEUM) // Define your types
+        val popularPlacesNearby = mutableListOf<String>()
+
         val placeFields = listOf(
             Place.Field.ID,
             Place.Field.NAME,
@@ -110,15 +95,19 @@ class LocationFragment : Fragment() {
             val place = response.place
 
             // Handle additional place details
-            placeDetails = PlaceDetails(
-                place.name,
-                place.address,
-                place.photoMetadatas,
-                place.types,
-                place.openingHours,
-                place.rating,
-                place.editorialSummary,
-            )
+            placeDetails = place.placeTypes?.let {
+                PlaceDetails(
+                    place.name,
+                    place.address,
+                    place.photoMetadatas,
+                    place.types,
+                    place.openingHours,
+                    place.rating,
+                    place.editorialSummary,
+                    popularPlaces = it // Replace with actual popular places
+
+                )
+            }!!
 
             // Update the UI with additional place details
             updateUIWithPlaceDetails(placeDetails)
@@ -149,7 +138,7 @@ class LocationFragment : Fragment() {
         }
 
         // Update the place image (if available)
-        if (placeDetails.photoMetadatas != null && placeDetails.photoMetadatas.isNotEmpty()) {
+        if (!placeDetails.photoMetadatas.isNullOrEmpty()) {
             val photoMetadata = placeDetails.photoMetadatas[0] // You can choose which photo to display
             val photoRequest = FetchPhotoRequest.builder(photoMetadata)
                 .setMaxWidth(500) // Set the desired width of the image
@@ -192,10 +181,14 @@ class LocationFragment : Fragment() {
             binding.ratingTextView.visibility = View.GONE
         }
 
-        // Add more fields as needed
+        if (placeDetails.popularPlaces.isNotEmpty()) {
+            val popularPlacesText = placeDetails.popularPlaces.joinToString(", ")
+            binding.placeAttractionsTextView.text = popularPlacesText
+        } else {
+            binding.placeAttractionsTextView.visibility = View.GONE
+        }
+
     }
-
-
 }
 
 data class PlaceDetails(
@@ -206,6 +199,7 @@ data class PlaceDetails(
     val openingHours: OpeningHours?,
     val rating: Double?,
     val description: String?,
+    val popularPlaces: List<String>
     // Add more fields as needed
 )
 
