@@ -8,9 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project.R
-import com.google.android.libraries.places.api.model.Place
+import com.example.project.ui.location.MyPlace
 
-class PopularPlacesAdapter(private val places: List<Place>) : RecyclerView.Adapter<PopularPlacesAdapter.ViewHolder>() {
+class PopularPlacesAdapter(private val places: MutableList<MyPlace>) : RecyclerView.Adapter<PopularPlacesAdapter.ViewHolder>() {
 
     // ViewHolder class to hold the views
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

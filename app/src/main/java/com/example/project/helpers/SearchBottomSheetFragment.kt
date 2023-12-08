@@ -47,7 +47,6 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
     private val searchResultsList = mutableListOf<AutocompletePrediction>()
 
     companion object {
-        fun newInstance() = SearchBottomSheetFragment()
         private const val TAG = "SearchBottomSheetFragment"
     }
 
@@ -116,9 +115,10 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
                 ?.map { it.name } ?: listOf()
 
             val latLng = place.latLng // Get the LatLng
+            val locationName = place.name // Get the name of the location
 
-            // Pass the place, popular places, and latLng to LocationFragment
-            navigateToPlaceDetailsFragment(place, popularPlaces, latLng)
+            // Pass the place, popular places, latLng, and locationName to LocationFragment
+            navigateToPlaceDetailsFragment(place, popularPlaces, latLng, locationName)
         }.addOnFailureListener { exception: Exception ->
             if (exception is ApiException) {
                 Log.e(TAG, "Place not found: " + exception.message + ", statusCode: " + exception.statusCode)
@@ -127,13 +127,14 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
 
-    private fun navigateToPlaceDetailsFragment(place: Place, popularPlaces: List<String>, latLng: LatLng?) {
-        val fragment = LocationFragment.newInstance(place, popularPlaces, latLng?.latitude, latLng?.longitude)
+    private fun navigateToPlaceDetailsFragment(place: Place, popularPlaces: List<String>, latLng: LatLng?, locationName: String?) {
+        val fragment = LocationFragment.newInstance(place, popularPlaces, latLng?.latitude, latLng?.longitude, locationName)
         childFragmentManager.beginTransaction()
             .replace(R.id.frag_maps, fragment)
             .addToBackStack(null)
             .commit()
     }
+
 
 
 
@@ -153,21 +154,36 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
         okHttpClient.newCall(request).enqueue(object : Callback {
             override fun onResponse(response: Response?) {
                 if (response != null) {
-                    response.body()?.string()?.let { responseBody ->
-                        val jsonObject = JSONObject(responseBody)
-                        val candidates = jsonObject.getJSONArray("candidates")
-                        if (candidates.length() > 0) {
-                            val location = candidates.getJSONObject(0).getJSONObject("geometry").getJSONObject("location")
-                            val lat = location.getDouble("lat")
-                            val lng = location.getDouble("lng")
-                            val latLng = "$lat,$lng"
-                            callback(latLng)
+                    if (response.isSuccessful) {
+                        response.body()?.string()?.let { responseBody ->
+                            val jsonObject = JSONObject(responseBody)
+                            val candidates = jsonObject.getJSONArray("candidates")
+                            if (candidates.length() > 0) {
+                                val location = candidates.getJSONObject(0).getJSONObject("geometry").getJSONObject("location")
+                                val lat = location.getDouble("lat")
+                                val lng = location.getDouble("lng")
+                                val latLng = "$lat,$lng"
+                                callback(latLng)
+
+                                // Log success
+                                Log.d(TAG, "Coordinates fetched successfully: $latLng")
+                            } else {
+                                // Log that no candidates were found
+                                Log.w(TAG, "No candidates found in the response")
+                            }
                         }
+                    } else {
+                        // Log failure with response code
+                        Log.e(TAG, "Fetch coordinates request failed with response code: ${response.code()}")
                     }
+                } else {
+                    // Log failure with no response
+                    Log.e(TAG, "No response received")
                 }
             }
 
             override fun onFailure(request: Request?, e: IOException?) {
+                // Log failure
                 Log.e(TAG, "Fetch coordinates request failed", e)
             }
         })
@@ -187,18 +203,27 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
                             activity?.runOnUiThread {
                                 updateSearchResults(places)
                             }
+
+                            // Log success
+                            Log.d(TAG, "Nearby search successful")
                         }
                     } else {
+                        // Log failure with response code
                         Log.e(TAG, "Nearby search request failed with response code: ${response.code()}")
                     }
+                } else {
+                    // Log failure with no response
+                    Log.e(TAG, "No response received")
                 }
             }
 
             override fun onFailure(request: Request?, e: IOException?) {
+                // Log failure
                 Log.e(TAG, "Nearby search request failed", e)
             }
         })
     }
+
 
     private fun parsePlaces(jsonResponse: String): List<AutocompletePrediction> {
         val jsonObject = JSONObject(jsonResponse)
@@ -223,6 +248,7 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
     // Update searchResultsList with the fetched search results
     private fun updateSearchResults(results: List<AutocompletePrediction>) {
         Log.d(TAG, "Updating search results: ${results.size} items found.")
+        Log.d("main results", "search results: $results items found.")
         searchResultsList.clear()
         searchResultsList.addAll(results)
         searchResultsAdapter.run {

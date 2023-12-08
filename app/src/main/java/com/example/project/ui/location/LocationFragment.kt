@@ -4,14 +4,15 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project.R
 import com.example.project.adapters.PopularPlacesAdapter
+import com.example.project.api.PlacesService
 import com.example.project.databinding.FragmentLocationBinding
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.model.LatLng
@@ -19,18 +20,24 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.OpeningHours
 import com.google.android.libraries.places.api.model.PhotoMetadata
 import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.net.FetchPhotoRequest
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import com.google.android.libraries.places.api.net.FetchPlaceResponse
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.api.model.RectangularBounds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.net.URLEncoder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 
 
 class LocationFragment : Fragment() {
@@ -44,19 +51,28 @@ class LocationFragment : Fragment() {
     private var longitude: Double? = null
 
     private lateinit var popularPlacesAdapter: PopularPlacesAdapter
-    private var nearbyPlacesList = mutableListOf<Place>()
+    private var nearbyPlacesList = mutableListOf<MyPlace>()
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://maps.googleapis.com/maps/api/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val placesApiService = retrofit.create(PlacesService::class.java)
 
     companion object {
         private const val ARG_PLACE = "place"
         private const val ARG_POPULAR_PLACES = "popularPlaces"
         private const val ARG_LATITUDE = "latitude"
         private const val ARG_LONGITUDE = "longitude"
+        private const val ARG_LOCATION_NAME = "locationName"
 
         fun newInstance(
             place: Place,
             popularPlaces: List<String>,
             latitude: Double?,
-            longitude: Double?
+            longitude: Double?,
+            locationName: String?
         ): LocationFragment {
             val fragment = LocationFragment()
             val args = Bundle().apply {
@@ -64,6 +80,7 @@ class LocationFragment : Fragment() {
                 putStringArrayList(ARG_POPULAR_PLACES, ArrayList(popularPlaces))
                 putDouble(ARG_LATITUDE, latitude ?: 0.0)
                 putDouble(ARG_LONGITUDE, longitude ?: 0.0)
+                putString(ARG_LOCATION_NAME, locationName)
             }
             fragment.arguments = args
             return fragment
@@ -74,6 +91,7 @@ class LocationFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             place = it.getParcelable(ARG_PLACE) ?: throw IllegalStateException("Place data is required.")
+            val locationName = arguments?.getString(ARG_LOCATION_NAME)
             val popularPlaces = it.getStringArrayList(ARG_POPULAR_PLACES) ?: emptyList<String>()
             latitude = it.getDouble(ARG_LATITUDE)
             longitude = it.getDouble(ARG_LONGITUDE)
@@ -111,6 +129,11 @@ class LocationFragment : Fragment() {
 
         // Fetch and display nearby places
         fetchNearbyPlaces()
+
+        val locationName = arguments?.getString(ARG_LOCATION_NAME)
+        if (!locationName.isNullOrEmpty()) {
+            searchPlacesByName(locationName)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -120,60 +143,52 @@ class LocationFragment : Fragment() {
     }
 
     private fun fetchNearbyPlaces() {
-        // Define location parameters
         val locationBias = RectangularBounds.newInstance(
             LatLng(latitude ?: (0.0 - 0.1), longitude ?: (0.0 - 0.1)),
             LatLng(latitude ?: (0.0 + 0.1), longitude ?: (0.0 + 0.1))
         )
 
-        // Fetch places using Google Places API and update RecyclerView
-        // This is a simplification. In a real app, you would make an API call.
-        // For each place fetched, add it to `nearbyPlacesList` and update the adapter.
-        // For example:
-        // nearbyPlacesList.add(fetchedPlace)
-        // popularPlacesAdapter.notifyDataSetChanged()
-    }
+        // Use a coroutine to fetch nearby places asynchronously
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Create a request to find nearby places
+                val request = FindCurrentPlaceRequest.newInstance(listOf(Place.Field.NAME))
 
-    private fun fetchPlaceDetails(placeId: String) {
-        // Define the fields you want to retrieve for place details
-        val popularPlaceTypes = listOf(Place.Type.RESTAURANT, Place.Type.MUSEUM) // Define your types
-        val popularPlacesNearby = mutableListOf<String>()
+                // Check for location permissions
+                if (ActivityCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    // TODO: Handle the case where location permissions are not granted.
+                    // You can request permissions here.
+                    return@launch
+                }
 
-        val placeFields = listOf(
-            Place.Field.ID,
-            Place.Field.NAME,
-            Place.Field.ADDRESS,
-            Place.Field.PHOTO_METADATAS,
-            Place.Field.TYPES,
-            Place.Field.OPENING_HOURS,
-            Place.Field.RATING,
-            // Add more fields as needed
-        )
+                // Fetch nearby places using PlacesClient
+                val response = placesClient.findCurrentPlace(request).await()
 
-        val request = FetchPlaceRequest.newInstance(placeId, placeFields)
-        placesClient.fetchPlace(request).addOnSuccessListener { response: FetchPlaceResponse ->
-            val place = response.place
+                // Extract and log nearby places
+                val nearbyPlaces = response.placeLikelihoods
+                val nearbyPlaceIds = mutableListOf<String>()
 
-            // Handle additional place details
-            placeDetails = place.placeTypes?.let {
-                PlaceDetails(
-                    place.name,
-                    place.address,
-                    place.photoMetadatas,
-                    place.types,
-                    place.openingHours,
-                    place.rating,
-                    place.editorialSummary,
-                    popularPlaces = it // Replace with actual popular places
-                )
-            }!!
+                for (likelihood in nearbyPlaces) {
+                    val place = likelihood.place
+                    val placeId = place.id
+                    if (placeId != null) {
+                        nearbyPlaceIds.add(placeId)
+                    }
+                }
 
-            // Update the UI with additional place details
-            updateUIWithPlaceDetails(placeDetails)
-        }.addOnFailureListener { exception: Exception ->
-            if (exception is ApiException) {
-                val statusCode = exception.statusCode
-                Log.e("LocationFragment", "Place details not found: ${exception.message}, statusCode: $statusCode")
+                logPopularPlaces(nearbyPlaceIds)
+
+                // Fetch details for the nearby places and update the UI
+                updateNearbyPopularPlaces(nearbyPlaceIds)
+            } catch (e: Exception) {
+                Log.e("LocationFragment", "Error fetching nearby places: ${e.message}", e)
             }
         }
     }
@@ -301,41 +316,114 @@ class LocationFragment : Fragment() {
             }
     }
 
+    private fun searchPlacesByName(locationName: String) {
+        val apiKey = getString(R.string.google_maps_key) // Replace with your actual API key
+        val language = "en"
+        val fields = "name,formatted_address,photos,types,opening_hours,rating" // Specify the fields you want
 
+        // Encode the locationName for the query
+        val encodedQuery = URLEncoder.encode(locationName, "UTF-8")
 
-    private fun logPopularPlaces(popularPlaces: List<String>) {
-        // Log popular places
-        Log.d("LocationFragment1", "Popular places nearby: ${popularPlaces.joinToString(", ")}")
+        // Make the API request in a Coroutine
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Call the searchPlaces function from your PlacesService
+                val response = placesApiService.searchPlaces(encodedQuery, language, fields, apiKey)
+
+                // Check if the response is successful (HTTP 200-299)
+                if (response.isSuccessful) {
+                    val placesResponse = response.body()
+
+                    // Handle the response here, e.g., update your UI with the results
+                    val places = placesResponse?.results
+
+                    // Check if places is not null before updating your UI
+                    if (places != null) {
+                        // You can update your UI with the list of places here
+                        // For example, you can update a RecyclerView with the places data
+                        updateUIWithNearbyPlaces(places)
+                    } else {
+                        // Handle the case where places is null or empty
+                    }
+                } else {
+                    // Handle the case where the HTTP request was not successful
+                    Log.e("LocationFragment", "API request failed with code: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                // Handle errors, e.g., network error or API error
+                Log.e("LocationFragment", "Error searching places: ${e.message}", e)
+            }
+        }
     }
+
+
+    private fun logPopularPlaces(popularPlaceIds: List<String>) {
+        Log.d("LocationFragment", "Nearby place IDs: ${popularPlaceIds.joinToString(", ")}")
+    }
+
+    private suspend fun updateUIWithNearbyPlaces(places: List<Place>) {
+        // Create a list of MyPlace objects from the retrieved Place objects
+        val nearbyPlaces = places.map { place ->
+            MyPlace(
+                name = place.name,
+                address = place.address,
+                photoMetadatas = place.photoMetadatas,
+                types = place.types,
+                openingHours = place.openingHours,
+                rating = place.rating
+            )
+        }
+
+        // Update the nearbyPlacesList on the main thread
+        withContext(Dispatchers.Main) {
+            nearbyPlacesList.clear()
+            nearbyPlacesList.addAll(nearbyPlaces)
+            popularPlacesAdapter.notifyDataSetChanged()
+        }
+    }
+
 
     private fun updateNearbyPopularPlaces(placeIds: List<String>) {
         CoroutineScope(Dispatchers.IO).launch {
-            // Clear the existing list
-            nearbyPlacesList.clear()
+            try {
+                val places = mutableListOf<MyPlace>()
 
-            placeIds.forEach { placeId ->
-                // Fetch details for each place ID
-                val placeFields = listOf(
-                    Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS,
-                    Place.Field.LAT_LNG, Place.Field.PHOTO_METADATAS
-                    // Add other fields you need
-                )
+                for (placeId in placeIds) {
+                    val placeFields = listOf(
+                        Place.Field.ID,
+                        Place.Field.NAME,
+                        Place.Field.ADDRESS,
+                        Place.Field.PHOTO_METADATAS,
+                        Place.Field.TYPES,
+                        Place.Field.OPENING_HOURS,
+                        Place.Field.RATING
+                    )
 
-                val request = FetchPlaceRequest.newInstance(placeId, placeFields)
-                try {
+                    val request = FetchPlaceRequest.newInstance(placeId, placeFields)
                     val response = placesClient.fetchPlace(request).await()
                     val place = response.place
 
-                    // Add the fetched place to the list
-                    nearbyPlacesList.add(place)
-                } catch (e: ApiException) {
-                    Log.e("LocationFragment", "Error fetching place details: ${e.message}")
-                }
-            }
+                    // Convert Google Place to your custom Place model
+                    val myPlace = MyPlace(
+                        name = place.name,
+                        address = place.address,
+                        photoMetadatas = place.photoMetadatas,
+                        types = place.types,
+                        openingHours = place.openingHours,
+                        rating = place.rating
+                    )
 
-            // Update the RecyclerView on the main thread
-            withContext(Dispatchers.Main) {
-                popularPlacesAdapter.notifyDataSetChanged()
+                    places.add(myPlace)
+                }
+
+                // Update the nearbyPlacesList on the main thread
+                withContext(Dispatchers.Main) {
+                    nearbyPlacesList.clear()
+                    nearbyPlacesList.addAll(places)
+                    popularPlacesAdapter.notifyDataSetChanged()
+                }
+            } catch (e: Exception) {
+                Log.e("LocationFragment", "Error fetching place details: ${e.message}", e)
             }
         }
     }
@@ -357,5 +445,14 @@ data class PlaceDetails(
     val description: String?,
     val popularPlaces: List<String>
     // Add more fields as needed
+)
+data class MyPlace(
+    val name: String?,
+    val address: String?,
+    val photoMetadatas: List<PhotoMetadata>?,
+    val types: List<Place.Type>?,
+    val openingHours: OpeningHours?,
+    val rating: Double?
+    // Add other fields as needed
 )
 

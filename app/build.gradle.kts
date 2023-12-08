@@ -62,6 +62,7 @@ dependencies {
 
 
     implementation("io.coil-kt:coil:2.3.0")
+    implementation("androidx.privacysandbox.tools:tools-core:1.0.0-alpha06")
 
 
 
