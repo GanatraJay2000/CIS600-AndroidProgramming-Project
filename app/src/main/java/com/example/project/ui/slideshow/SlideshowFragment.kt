@@ -6,8 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.project.R
 import com.example.project.databinding.FragmentSlideshowBinding
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.Places
+import com.google.maps.android.ktx.addMarker
+import com.google.maps.android.ktx.awaitMap
+import kotlinx.coroutines.launch
 
 class SlideshowFragment : Fragment() {
 
@@ -22,6 +33,7 @@ class SlideshowFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         val slideshowViewModel =
             ViewModelProvider(this)[SlideshowViewModel::class.java]
 
@@ -32,6 +44,7 @@ class SlideshowFragment : Fragment() {
         slideshowViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+
         return root
     }
 
