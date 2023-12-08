@@ -20,7 +20,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.project.auth.LoginActivity
 import com.example.project.databinding.ActivityMainBinding
-import com.example.project.helpers.SearchBottomSheetFragment
+import com.example.project.helpers.add_trip.AddTripFragment
+import com.example.project.helpers.search.SearchBottomSheetFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.auth
 
@@ -141,7 +142,8 @@ class MainActivity : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.addTripPlan -> {
-                    navigateToDestination(R.id.nav_slideshow)
+                    val addTripFragment = AddTripFragment()
+                    addTripFragment.show(supportFragmentManager, addTripFragment.tag)
                     true
                 }
                 R.id.addTravelogue -> {

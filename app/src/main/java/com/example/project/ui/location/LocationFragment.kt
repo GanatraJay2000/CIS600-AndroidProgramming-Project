@@ -27,14 +27,11 @@ class LocationFragment : Fragment() {
         _binding = FragmentLocationBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //use binding to use view
 
 
         val locationId = arguments?.getInt("locationId") ?: 1

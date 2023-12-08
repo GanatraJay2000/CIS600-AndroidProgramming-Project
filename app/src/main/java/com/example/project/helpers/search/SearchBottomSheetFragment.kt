@@ -1,4 +1,4 @@
-package com.example.project.helpers
+package com.example.project.helpers.search
 
 import android.os.Bundle
 import android.text.Editable
@@ -8,12 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
+import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project.R
 import com.example.project.adapters.SearchResultsAdapter
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.Place
@@ -24,7 +24,6 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.maps.android.Status
 
 class SearchBottomSheetFragment : BottomSheetDialogFragment() {
 
@@ -95,9 +94,12 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
             performSearch(query) // Update searchResultsList with your search results
             true
         }
+
+        view.findViewById<Button>(R.id.closeButton).setOnClickListener {
+            dismiss()
+        }
     }
 
-// ... rest of your code ...
 
 
     private fun onSearchResultClick(prediction: AutocompletePrediction) {
