@@ -46,11 +46,11 @@
 
     <ImageButton
         android:id="@+id/btn_welcomeP1"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:padding="16dp"
-        android:src="@drawable/ic_viewpager_next_btn"
+        android:src="@drawable/next"
         app:layout_constraintBottom_toTopOf="@id/skipText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

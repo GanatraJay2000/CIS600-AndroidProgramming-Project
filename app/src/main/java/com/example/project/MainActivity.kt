@@ -22,10 +22,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.project.auth.LoginActivity
 import com.example.project.databinding.ActivityMainBinding
-import com.example.project.helpers.search.SearchBottomSheetFragment
 import com.example.project.helpers.add_trip.AddTripFragment
+import com.example.project.helpers.search.SearchBottomSheetFragment
 import com.example.project.helpers.search.SearchBottomSheetViewModel
-import com.example.project.models.Note
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.auth
@@ -100,14 +99,18 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+
+        if (savedInstanceState != null) {
+            val savedValue = savedInstanceState.getString("save")
+        }
     }
 
-    public fun signOut() {
+    private fun signOut() {
         auth.signOut()
         startActivity(Intent(this, LoginActivity::class.java))
     }
 
-    public fun checkUserSignedIn() {
+     private fun checkUserSignedIn() {
         val currentUser = auth.currentUser
         Log.v("MainActivity", "Current user: $currentUser")
         if (currentUser == null) {
@@ -168,6 +171,18 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString("save", "savedstate")
+
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val value = savedInstanceState.getString("save")
+    }
+
 
     private fun showContextMenu(view: View) {
         val popupMenu = PopupMenu(this, view)

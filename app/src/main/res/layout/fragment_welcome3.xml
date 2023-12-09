@@ -44,12 +44,12 @@
 
     <ImageButton
         android:id="@+id/btn_welcomeP3"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="16dp"
-        android:src="@drawable/ic_viewpager_next_btn"
+        android:src="@drawable/next"
         app:layout_constraintBottom_toTopOf="@id/skipText3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
