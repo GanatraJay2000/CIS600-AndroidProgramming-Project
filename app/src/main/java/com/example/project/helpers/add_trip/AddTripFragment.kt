@@ -3,10 +3,13 @@ package com.example.project.helpers.add_trip
 import android.app.DatePickerDialog
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import com.example.project.R
 import com.example.project.databinding.FragmentAddTripBinding
 import com.example.project.databinding.FragmentLocationBinding
@@ -70,28 +73,20 @@ class AddTripFragment  : BottomSheetDialogFragment() {
         // Optionally, set the height to full screen
         bottomSheet?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
 
-        val startDateEditText = binding.startDateEditText
-        val endDateEditText = binding.endDateEditText
-
-        startDateEditText.setOnClickListener {
-            showDateRangePicker()
-            }
-
-        // End Date Picker
-        endDateEditText.setOnClickListener {
-            showDateRangePicker()
-            }
+        // Open date picker when clicking on the date fields
+        binding.startDateEditText.setOnClickListener { showDateRangePicker() }
+        binding.endDateEditText.setOnClickListener { showDateRangePicker() }
 
         binding.startPlanningButton.setOnClickListener {
             val destination = binding.whereToEditText.text.toString()
             val startDate = binding.startDateEditText.text.toString()
             val endDate = binding.endDateEditText.text.toString()
-
+            Log.v("AddTripFragment", "destination$destination, startDate$startDate, endDate$endDate")
             if (destination.isNotEmpty() && startDate.isNotEmpty() && endDate.isNotEmpty()) {
                 viewModel.setTripDetails(destination, startDate, endDate)
-                // TODO: Navigate away or show confirmation
-            } else {
-                // TODO: Show error, fields are not filled in
+                dismiss()
+                Log.v("AddTripFragment", "navigate to home")
+                navigateToDestination(R.id.nav_trip)
             }
         }
     }
@@ -107,11 +102,7 @@ class AddTripFragment  : BottomSheetDialogFragment() {
         val selection = if (currentStartDateStr.isNotEmpty() && currentEndDateStr.isNotEmpty()) {
             val startMillis = java.time.LocalDate.parse(currentStartDateStr, formatter).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
             val endMillis = java.time.LocalDate.parse(currentEndDateStr, formatter).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-            if (startMillis != null && endMillis != null) {
-                androidx.core.util.Pair(startMillis, endMillis) // Correct Pair type from AndroidX
-            } else {
-                null
-            }
+            androidx.core.util.Pair(startMillis, endMillis)
         } else {
             null
         }
@@ -144,5 +135,31 @@ class AddTripFragment  : BottomSheetDialogFragment() {
         // Show the date range picker
         dateRangePicker.show(parentFragmentManager, dateRangePicker.toString())
     }
+    fun navigateToDestination(destinationId: Int) {
+        val navController = findNavController()
+        val currentDestination = navController.currentDestination?.id
 
+        if (currentDestination != destinationId) {
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(navController.graph.startDestinationId, false)
+                .setEnterAnim(R.anim.slide_in_right)
+                .setExitAnim(R.anim.slide_out_left)
+                .build()
+            navController.navigate(destinationId, null, navOptions)
+        }
+    }
+    fun navigateToDestination(destinationId: Int, locationId: Int) {
+        val navController = findNavController()
+        val currentDestination = navController.currentDestination?.id
+
+        if (currentDestination != destinationId) {
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(navController.graph.startDestinationId, false)
+                .setEnterAnim(R.anim.slide_in_right)
+                .setExitAnim(R.anim.slide_out_left)
+                .build()
+            val bundle = Bundle().apply { putInt("locationId", locationId) }
+            navController.navigate(destinationId, bundle, navOptions)
+        }
+    }
 }

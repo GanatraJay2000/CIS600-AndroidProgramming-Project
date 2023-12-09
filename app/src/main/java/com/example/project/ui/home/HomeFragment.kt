@@ -8,11 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.project.R
+import com.example.project.adapters.FeaturedGuidesAdapter
+import com.example.project.adapters.TopLocationsAdapter
 import com.example.project.databinding.FragmentHomeBinding
-import com.example.project.models.Guide
-import com.example.project.models.Location
+import com.example.project.helpers.add_trip.AddTripFragment
+import com.example.project.helpers.search.SearchBottomSheetFragment
 import com.example.project.models.dummyGuides
 import com.example.project.models.dummyLocations
 
@@ -31,7 +32,8 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         binding.cypButton.setOnClickListener {
-            navigateToDestination(R.id.nav_slideshow)
+            val addTripFragment = AddTripFragment()
+            addTripFragment.show(parentFragmentManager, addTripFragment.tag)
         }
 
         //  Featured Guides
@@ -44,7 +46,7 @@ class HomeFragment : Fragment() {
 
         val locationsList = dummyLocations
         val tlAdapter  = TopLocationsAdapter(locationsList) { locationId ->
-            navigateToDestination(R.id.locationFragment, locationId)
+            navigateToDestination(R.id.nav_location, locationId)
         }
         val tlRecyclerView = binding.dashboardTopLocations
         tlRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -52,7 +54,7 @@ class HomeFragment : Fragment() {
 
         val spotsList = dummyLocations
         val snmAdapter = TopLocationsAdapter(locationsList) { locationId ->
-            navigateToDestination(R.id.locationFragment, locationId)
+            navigateToDestination(R.id.nav_location, locationId)
         }
         val snmRecyclerView = binding.dashboardSpotsNearMe
         snmRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)

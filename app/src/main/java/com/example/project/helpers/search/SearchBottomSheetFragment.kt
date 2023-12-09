@@ -198,7 +198,7 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun fetchCoordinates(query: String, callback: (String) -> Unit) {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
-        val url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=$encodedQuery&inputtype=textquery&fields=geometry/location&key=AIzaSyBvQIUByA2GmXPnNMZ51hNtVHDhBLMAvoI"
+        val url = "https://maps.googleapis.com/maps/api/place/findplcacefromtext/json?input=$encodedQuery&inputtype=textquery&fields=geometry/location&key=AIzaSyBvQIUByA2GmXPnNMZ51hNtVHDhBLMAvoI"
 
         val request = Request.Builder().url(url).build()
         okHttpClient.newCall(request).enqueue(object : Callback {

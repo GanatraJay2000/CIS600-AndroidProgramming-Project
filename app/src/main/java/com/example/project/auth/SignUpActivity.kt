@@ -12,6 +12,7 @@ import com.example.project.R
 import com.example.project.databinding.ActivityLoginBinding
 import com.example.project.databinding.ActivitySignUpBinding
 import com.google.firebase.Firebase
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.auth
 
 class SignUpActivity : AppCompatActivity() {
@@ -26,6 +27,7 @@ class SignUpActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        val name = binding.nameField.editText?.text
         val email = binding.emailField.editText?.text
         val password = binding.passwordField.editText?.text
 
@@ -33,8 +35,8 @@ class SignUpActivity : AppCompatActivity() {
 
         binding.signupButton.setOnClickListener {
             //check if editText fields are empty
-            if(email == null || password == null) Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
-            else signup(email.toString(), password.toString())
+            if(name == null || email == null || password == null) Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
+            else signup(name.toString(), email.toString(), password.toString())
         }
 
         //close app on back press
@@ -45,13 +47,23 @@ class SignUpActivity : AppCompatActivity() {
         })
     }
 
-    private fun signup(email: String, password: String) {
+    private fun signup(name: String, email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    Toast.makeText(this, "Welcome ${user?.email}", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainActivity::class.java))
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        .build()
+                    user?.updateProfile(profileUpdates)
+                        ?.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(this, "Welcome ${user?.displayName}", Toast.LENGTH_SHORT).show()
+                                startActivity(Intent(this, MainActivity::class.java))
+                            }else{
+                                Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                 } else {
                     Toast.makeText(
                         baseContext,
