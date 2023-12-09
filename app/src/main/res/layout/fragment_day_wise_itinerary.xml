@@ -5,17 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.trip.DayWiseItineraryFragment">
 
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:ignore="UselessParent">
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/sectionsRecyclerView"
+            android:paddingTop="16dp"
+            android:id="@+id/placesRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="16dp" />
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </FrameLayout>

@@ -1,6 +1,7 @@
 package com.example.project
 
 //import android.widget.Toolbar
+//import MyDatabaseHelper
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -21,8 +22,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.project.auth.LoginActivity
 import com.example.project.databinding.ActivityMainBinding
-import com.example.project.helpers.add_trip.AddTripFragment
 import com.example.project.helpers.search.SearchBottomSheetFragment
+import com.example.project.helpers.add_trip.AddTripFragment
 import com.example.project.helpers.search.SearchBottomSheetViewModel
 import com.example.project.models.Note
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -99,19 +100,6 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
-
-
-        val dbHelper = MyDatabaseHelper(this)
-        val newNote = Note(id = 1, description = "Sample Note")
-        val noteId = dbHelper.insertNote(newNote)
-        Log.v("MainActivity", "Note id: $noteId")
-        val notes = dbHelper.getAllNotes()
-        val updatedNote = Note(id = 1, description = "Updated Note")
-        val rowsAffected = dbHelper.updateNote(updatedNote)
-        Log.v("MainActivity", "Updated note affected: $rowsAffected")
-        val deletedNoteId = dbHelper.deleteNoteById(1)
-        Log.v("MainActivity", "Deleted note id: $deletedNoteId")
-        dbHelper.close()
     }
 
     public fun signOut() {

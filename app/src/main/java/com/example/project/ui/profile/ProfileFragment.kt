@@ -17,6 +17,7 @@ import com.example.project.R
 import com.example.project.adapters.TripAdapter
 import com.example.project.databinding.FragmentProfileBinding
 import com.example.project.helpers.profile_picture_dialog.ImageSelectionDialogFragment
+import com.example.project.models.dummyTrips
 import com.example.project.models.ChecklistItem
 import com.example.project.models.Note
 import com.google.firebase.Firebase

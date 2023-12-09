@@ -1,6 +1,7 @@
 package com.example.project.ui.trip
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import com.example.project.adapters.ChecklistsAdapter
 import com.example.project.adapters.NotesAdapter
 import com.example.project.databinding.FragmentTripOverviewBinding
 import com.example.project.models.dummyChecklistItems
+import com.example.project.models.dummyChecklists
 import com.example.project.models.dummyNotes
 
 
@@ -23,6 +25,10 @@ class TripOverviewFragment : Fragment() {
 
     private lateinit var notesAdapter: NotesAdapter
     private lateinit var checklistsAdapter: ChecklistsAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,13 +41,14 @@ class TripOverviewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         notesAdapter = NotesAdapter(dummyNotes)
         binding.notesRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = notesAdapter
         }
 
-        checklistsAdapter = ChecklistsAdapter(dummyChecklistItems)
+        checklistsAdapter = ChecklistsAdapter(dummyChecklists)
         binding.checklistRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = checklistsAdapter
@@ -50,40 +57,7 @@ class TripOverviewFragment : Fragment() {
 
     }
 
-
-
     companion object {
         fun newInstance() = TripOverviewFragment()
-    }
-
-
-
-
-    fun navigateToDestination(destinationId: Int) {
-        val navController = findNavController()
-        val currentDestination = navController.currentDestination?.id
-
-        if (currentDestination != destinationId) {
-            val navOptions = NavOptions.Builder()
-                .setPopUpTo(navController.graph.startDestinationId, false)
-                .setEnterAnim(R.anim.slide_in_right)
-                .setExitAnim(R.anim.slide_out_left)
-                .build()
-            navController.navigate(destinationId, null, navOptions)
-        }
-    }
-    fun navigateToDestination(destinationId: Int, locationId: String) {
-        val navController = findNavController()
-        val currentDestination = navController.currentDestination?.id
-
-        if (currentDestination != destinationId) {
-            val navOptions = NavOptions.Builder()
-                .setPopUpTo(navController.graph.startDestinationId, false)
-                .setEnterAnim(R.anim.slide_in_right)
-                .setExitAnim(R.anim.slide_out_left)
-                .build()
-            val bundle = Bundle().apply { putString("SECTION_TYPE", locationId) }
-            navController.navigate(destinationId, bundle, navOptions)
-        }
     }
 }
