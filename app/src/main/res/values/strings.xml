@@ -13,7 +13,7 @@
     <string name="todo">TODO</string>
 
     <string name="tripPlan">Trip Plan</string>
-    <string name="travelogue">Travelogue</string>
+    <string name="travelogue">Travelogue (Future)</string>
 
     <!--Auth-->
     <string name="email_address">E-mail address</string>

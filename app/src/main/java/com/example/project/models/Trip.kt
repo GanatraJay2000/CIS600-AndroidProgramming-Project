@@ -1,5 +1,6 @@
 package com.example.project.models
 
+import com.google.android.libraries.places.api.model.PhotoMetadata
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -24,20 +25,27 @@ data class Checklist(
 ) : Item
 
 data class Place(
-    val id: Int,
+    val id: String,
     val title: String,
-    val imageUrl: String,
-    val description: String,
-    val name: String?,
-    val address: String?,
-    val geometry: Geometry?,
-    val icon: String?,
-    val photos: List<Photo>?,
-    val place_id: String?,
-    val rating: Double?,
-    val types: List<String>?,
-    val user_ratings_total: Int?,
+    val address: String,
+    val photoMetadata: MutableList<PhotoMetadata>? = null,
 ) : Item
+
+data class NearByPlace(
+    val name: Any?,
+    val formattedAddress: Any?,
+    val placeId: Any?,
+    val photos: List<*>?
+)
+
+data class NearByPlacePhoto(
+    val photoReference: String,
+    val height: Int,
+    val width: Int
+)
+
+
+
 enum class SectionType {
     NOTES,
     CHECKLIST,
@@ -90,79 +98,15 @@ val dummySections = listOf(
         SectionType.PLACES,
         listOf(
             Place(
-                1,
+                "1",
                 "London1",
-                "https://images.unsplash.com/photo-1519659528534-7fd733a832a0?q=80&w=1926&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "Beautiful place",
-                "London",
-                "London, UK",
-                Geometry(
-                    GeoLocation(51.5073509, -0.1277583),
-                    Viewport(
-                        GeoLocation(51.6723432, 0.148271),
-                        GeoLocation(51.38494009999999, -0.3514683)
-                    )
-                ),
-                "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png",
-                listOf(
-                    Photo(
-                        3024,
-                        listOf("Photo1"),
-                        "Photo1",
-                        4032
-                    )
-                ),
-                "ChIJdd4hrwug2EcRmSrV3Vo6llI",
-                4.7,
-                listOf("locality", "political"),
-                136
+                "hehe",
             ),
-            Place(1, "London2", "https://images.unsplash.com/photo-1519659528534-7fd733a832a0?q=80&w=1926&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            "Beautiful place",   "London",
-                "London, UK",
-                Geometry(
-                    GeoLocation(51.5073509, -0.1277583),
-                    Viewport(
-                        GeoLocation(51.6723432, 0.148271),
-                        GeoLocation(51.38494009999999, -0.3514683)
-                    )
-                ),
-                "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png",
-                listOf(
-                    Photo(
-                        3024,
-                        listOf("Photo1"),
-                        "Photo1",
-                        4032
-                    )
-                ),
-                "ChIJdd4hrwug2EcRmSrV3Vo6llI",
-                4.7,
-                listOf("locality", "political"),
-                136),
-            Place(1, "London3", "https://images.unsplash.com/photo-1519659528534-7fd733a832a0?q=80&w=1926&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            "Beautiful place",   "London",
-                "London, UK",
-                Geometry(
-                    GeoLocation(51.5073509, -0.1277583),
-                    Viewport(
-                        GeoLocation(51.6723432, 0.148271),
-                        GeoLocation(51.38494009999999, -0.3514683)
-                    )
-                ),
-                "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/geocode-71.png",
-                listOf(
-                    Photo(
-                        3024,
-                        listOf("Photo1"),
-                        "Photo1",
-                        4032
-                    )
-                ),
-                "ChIJdd4hrwug2EcRmSrV3Vo6llI",
-                4.7,
-                listOf("locality", "political"),
-                136),
+            Place(
+                "2",
+                "London2",
+                "hehe",
+            )
 
         )
     )

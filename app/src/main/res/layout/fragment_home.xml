@@ -106,7 +106,7 @@
         android:textFontWeight="500"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dashboardFeaturedGuides" />
+        app:layout_constraintTop_toBottomOf="@+id/dashboardTopLocations" />
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginStart="8dp"
         android:id="@+id/dashboardSpotsNearMe"
@@ -115,28 +115,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spotsNearMeTitle" />
-
-    <TextView
-        android:id="@+id/featuredGuidesTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/poppins_medium"
-        android:layout_marginStart="8dp"
-        android:text="Featured Guides from users"
-        android:textColor="#000"
-        android:textFontWeight="500"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dashboardTopLocations" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginStart="8dp"
-        android:id="@+id/dashboardFeaturedGuides"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/featuredGuidesTitle" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

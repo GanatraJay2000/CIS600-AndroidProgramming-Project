@@ -20,7 +20,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/descriptionTextView"
+            android:id="@+id/addressTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp" />

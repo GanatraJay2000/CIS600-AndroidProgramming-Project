@@ -89,11 +89,12 @@ class SectionItemsAdapter(private val items: List<Item>) : RecyclerView.Adapter<
     class PlaceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val titleTextView: TextView = view.findViewById(R.id.titleTextView)
         private val imageView: ImageView = view.findViewById(R.id.imageView)
-        private val descriptionTextView: TextView = view.findViewById(R.id.descriptionTextView)
+        private val addressTextView: TextView = view.findViewById(R.id.addressTextView)
 
         fun bind(place: Place) {
             titleTextView.text = place.title
-            descriptionTextView.text = place.description
+            addressTextView.text = place.address
+//            descriptionTextView.text = place.description
             // Load image using an image loading library like Coil or Glide
         }
     }

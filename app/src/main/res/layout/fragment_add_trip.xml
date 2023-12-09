@@ -46,6 +46,7 @@
             android:id="@+id/whereToEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:drawableStart="@drawable/location_on"
             android:hint="Where To?"
             android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>

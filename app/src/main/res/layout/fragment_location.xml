@@ -1,112 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+
+    tools:context=".ui.home.HomeFragment">
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_height="match_parent">
 
-    <!-- Image of the Place -->
-    <ImageView
-        android:id="@+id/placeImageView"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/switzerland"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/locationImageBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Name of the Place -->
-    <TextView
-        android:id="@+id/placeNameTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Place Name"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/placeImageView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <FrameLayout
+                android:id="@+id/imageView"
+                android:layout_width="0dp"
+                android:layout_height="300dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Address of the Place -->
-    <TextView
-        android:id="@+id/placeAddressTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Place Address"
-        app:layout_constraintTop_toBottomOf="@id/placeNameTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+                <ImageView
+                    android:id="@+id/locationImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg1"
+                    android:contentDescription="Banner Image" />
 
-    <!-- Description of the Place -->
-    <TextView
-        android:id="@+id/placeDescriptionTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Place Description"
-        app:layout_constraintTop_toBottomOf="@id/placeAddressTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#66000000" />
 
-    <!-- Popular Attractions -->
-    <TextView
-        android:id="@+id/placeAttractionsTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Popular Attractions"
-        app:layout_constraintTop_toBottomOf="@id/placeDescriptionTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            </FrameLayout>
 
-    <!-- Opening Hours -->
-    <TextView
-        android:id="@+id/openingHoursTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Opening Hours"
-        app:layout_constraintTop_toBottomOf="@id/placeAttractionsTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+            <TextView
+                android:id="@+id/locationTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="Title"
+                android:fontFamily="@font/poppins_medium"
+                android:textFontWeight="900"
+                android:textColor="#FFF"
+                android:textSize="32sp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toStartOf="@id/imageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/imageView" />
 
-    <!-- Rating Bar -->
-    <RatingBar
-        android:id="@+id/ratingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/openingHoursTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Google Map View -->
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/locationImageBanner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Rating Text -->
-    <TextView
-        android:id="@+id/ratingTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/ratingBar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/topLocationsTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_marginStart="8dp"
+            android:text="Nearby Attraction"
+            android:textColor="#000"
+            android:textFontWeight="500"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mapView" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginStart="8dp"
+            android:id="@+id/popularAttractions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topLocationsTitle" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/popularPlacesRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/ratingTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Additional views for more details can be added here -->
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
-
