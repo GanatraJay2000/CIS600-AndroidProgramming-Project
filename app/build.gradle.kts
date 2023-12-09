@@ -59,6 +59,8 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-common-ktx:20.4.2")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
+
+    
     implementation("com.google.android.libraries.places:places:3.3.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
 

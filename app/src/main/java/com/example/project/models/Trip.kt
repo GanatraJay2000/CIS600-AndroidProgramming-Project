@@ -1,5 +1,7 @@
 package com.example.project.models
 
+import com.google.android.libraries.places.api.model.PhotoMetadata
+import java.io.Serializable
 import java.text.SimpleDateFormat
 
 
@@ -22,11 +24,27 @@ data class Checklist(
 ) : Item
 
 data class Place(
-    val id: Int,
+    val id: String,
     val title: String,
-    val imageUrl: String,
-    val description: String,
+    val address: String,
+    val photoMetadata: MutableList<PhotoMetadata>? = null,
 ) : Item
+
+data class NearByPlace(
+    val name: Any?,
+    val formattedAddress: Any?,
+    val placeId: Any?,
+    val photos: List<*>?
+)
+
+data class NearByPlacePhoto(
+    val photoReference: String,
+    val height: Int,
+    val width: Int
+)
+
+
+
 enum class SectionType {
     NOTES,
     CHECKLIST,
@@ -89,6 +107,16 @@ val dummySections = listOf(
             "Beautiful place", 0.0 , 0.0),
             Place(1, "London3", "https://images.unsplash.com/photo-1519659528534-7fd733a832a0?q=80&w=1926&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             "Beautiful place", 0.0 , 0.0),
+            Place(
+                "1",
+                "London1",
+                "hehe",
+            ),
+            Place(
+                "2",
+                "London2",
+                "hehe",
+            )
 
         )
     )

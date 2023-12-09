@@ -38,9 +38,6 @@ class HomeFragment : Fragment() {
         //  Featured Guides
         val guidesList = dummyGuides
         val flAdapter = FeaturedGuidesAdapter(guidesList)
-        val flRecyclerView = binding.dashboardFeaturedGuides
-        flRecyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-        flRecyclerView.adapter = flAdapter
 
 
         val locationsList = dummyLocations

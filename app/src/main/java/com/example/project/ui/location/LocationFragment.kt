@@ -1,112 +1,117 @@
 package com.example.project.ui.location
 
-import PlacesService
-import android.Manifest
-import android.content.pm.PackageManager
+import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.project.R
-import com.example.project.adapters.PopularPlacesAdapter
+import com.example.project.adapters.NearByPlacesAdapter
 import com.example.project.databinding.FragmentLocationBinding
-import com.google.android.gms.common.api.ApiException
+import com.example.project.helpers.search.SearchBottomSheetViewModel
+import com.example.project.models.GeoLocation
+import com.example.project.models.NearByPlace
+import com.example.project.models.Viewport
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.OpeningHours
 import com.google.android.libraries.places.api.model.PhotoMetadata
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.net.FetchPhotoRequest
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse
 import com.google.android.libraries.places.api.net.PlacesClient
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+interface GooglePlacesApiService {
+    @GET("maps/api/place/textsearch/json")
+    fun getPointsOfInterest(
+        @Query("query") query: String,
+        @Query("language") language: String,
+        @Query("key") apiKey: String
+    ): Call<PointsOfInterestResponse> // Define a data class for the response
+}
+
+data class PointsOfInterestResponse(
+    val results: List<POI>
+)
+
+data class POI(
+    val name: String,
+    val formatted_address: String,
+    val place_id: String,
+    val photos: List<PhotoPlace>,
+    val geometry: PlaceGeometry
+)
+
+data class PlaceGeometry (
+    val location: GeoLocation,
+    val viewport: Viewport
+)
+
+data class PhotoPlace (
+    val height: Int,
+    val html_attributions: List<String>,
+    val photo_reference: String,
+    val width: Int
+)
 
 
-
-class LocationFragment : Fragment() {
+class LocationFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentLocationBinding? = null
     private val binding get() = _binding!!
+    companion object {
+        fun newInstance() = LocationFragment()
+    }
 
-    private lateinit var place: Place
-    private lateinit var placeDetails: PlaceDetails
+    private lateinit var viewModel: LocationViewModel
+    private lateinit var place: com.example.project.models.Place
+    private lateinit var placesAdapter: NearByPlacesAdapter
+    private lateinit var placesList: RecyclerView
+    private lateinit var searchViewModel: SearchBottomSheetViewModel
     private lateinit var placesClient: PlacesClient
-    private var latitude: Double? = null
-    private var longitude: Double? = null
+    private lateinit var mapView: MapView
+    private var googleMap: GoogleMap? = null
 
-    private lateinit var popularPlacesAdapter: PopularPlacesAdapter
-    private var nearbyPlacesList = mutableListOf<MyPlace>()
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://maps.googleapis.com/maps/api/")
+    val retrofit = Retrofit.Builder()
+        .baseUrl("https://maps.googleapis.com/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    private val placesApiService = retrofit.create(PlacesService::class.java)
+    val googlePlacesApi = retrofit.create(GooglePlacesApiService::class.java)
 
-    companion object {
-        private const val ARG_PLACE = "place"
-        private const val ARG_POPULAR_PLACES = "popularPlaces"
-        private const val ARG_LATITUDE = "latitude"
-        private const val ARG_LONGITUDE = "longitude"
-        private const val ARG_LOCATION_NAME = "locationName"
 
-        fun newInstance(
-            place: Place,
-            popularPlaces: List<String>,
-            latitude: Double?,
-            longitude: Double?,
-            locationName: String?
-        ): LocationFragment {
-            val fragment = LocationFragment()
-            val args = Bundle().apply {
-                putParcelable(ARG_PLACE, place)
-                putStringArrayList(ARG_POPULAR_PLACES, ArrayList(popularPlaces))
-                putDouble(ARG_LATITUDE, latitude ?: 0.0)
-                putDouble(ARG_LONGITUDE, longitude ?: 0.0)
-                putString(ARG_LOCATION_NAME, locationName)
-            }
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            place = it.getParcelable(ARG_PLACE) ?: throw IllegalStateException("Place data is required.")
-            val locationName = arguments?.getString(ARG_LOCATION_NAME)
-            val popularPlaces = it.getStringArrayList(ARG_POPULAR_PLACES) ?: emptyList<String>()
-            latitude = it.getDouble(ARG_LATITUDE)
-            longitude = it.getDouble(ARG_LONGITUDE)
-            placeDetails = PlaceDetails(
-                name = place.name,
-                address = place.address,
-                photoMetadatas = place.photoMetadatas,
-                types = place.types,
-                openingHours = place.openingHours,
-                rating = place.rating,
-                description = place.editorialSummary,
-                popularPlaces = popularPlaces
-            )
-        }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentLocationBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+
+        Places.initialize(requireContext(), getString(R.string.google_maps_key))
+        placesClient = Places.createClient(requireContext())
+
+
+        searchViewModel = ViewModelProvider(requireActivity()).get(SearchBottomSheetViewModel::class.java)
+
+        // Initialize MapView
+        mapView = binding.mapView
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
 
         return root
     }
@@ -114,345 +119,132 @@ class LocationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize Places API
-        Places.initialize(requireContext(), getString(R.string.google_maps_key)) // Replace with your API key
-        placesClient = Places.createClient(requireContext())
+        val place =  searchViewModel.place.value
 
-        // Now set the values in your UI components
-        updateUIWithPlaceDetails(placeDetails)
-        place.id?.let { latitude?.let { it1 -> longitude?.let { it2 -> logNearbyPlaces(it1.toDouble(), it2.toDouble()) } } }
-        logPopularPlaces(placeDetails.popularPlaces)
+        val locationId = arguments?.getInt("locationId") ?: 1
+        viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
+        viewModel.setLocationId(locationId)
 
-        setupRecyclerView()
 
-        // Fetch and display nearby places
-        fetchNearbyPlaces()
+        if (place != null) {
+            binding.locationTitle.text = place.title
 
-        val locationName = arguments?.getString(ARG_LOCATION_NAME)
-        if (!locationName.isNullOrEmpty()) {
-            //searchPlacesByName(locationName)
-        }
-    }
-
-    private fun setupRecyclerView() {
-        popularPlacesAdapter = PopularPlacesAdapter(nearbyPlacesList)
-        binding.popularPlacesRecyclerView.layoutManager = LinearLayoutManager(context)
-        binding.popularPlacesRecyclerView.adapter = popularPlacesAdapter
-    }
-
-    private fun fetchNearbyPlaces() {
-        val locationBias = RectangularBounds.newInstance(
-            LatLng(latitude ?: (0.0 - 0.1), longitude ?: (0.0 - 0.1)),
-            LatLng(latitude ?: (0.0 + 0.1), longitude ?: (0.0 + 0.1))
-        )
-
-        // Use a coroutine to fetch nearby places asynchronously
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                // Create a request to find nearby places
-                val request = FindCurrentPlaceRequest.newInstance(listOf(Place.Field.NAME))
-
-                // Check for location permissions
-                if (ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    // TODO: Handle the case where location permissions are not granted.
-                    // You can request permissions here.
-                    return@launch
-                }
-
-                // Fetch nearby places using PlacesClient
-                val response = placesClient.findCurrentPlace(request).await()
-
-                // Extract and log nearby places
-                val nearbyPlaces = response.placeLikelihoods
-                val nearbyPlaceIds = mutableListOf<String>()
-
-                for (likelihood in nearbyPlaces) {
-                    val place = likelihood.place
-                    val placeId = place.id
-                    if (placeId != null) {
-                        nearbyPlaceIds.add(placeId)
-                    }
-                }
-
-                logPopularPlaces(nearbyPlaceIds)
-
-                // Fetch details for the nearby places and update the UI
-                updateNearbyPopularPlaces(nearbyPlaceIds)
-            } catch (e: Exception) {
-                Log.e("LocationFragment", "Error fetching nearby places: ${e.message}", e)
-            }
-        }
-    }
-
-    private fun updateUIWithPlaceDetails(placeDetails: PlaceDetails) {
-        // Update the UI with additional place details
-
-        // Update the place description
-        if (placeDetails.description != null) {
-            binding.placeDescriptionTextView.text = placeDetails.description
-        } else {
-            binding.placeDescriptionTextView.visibility = View.GONE
-        }
-
-        // Update the top popular places
-        if (placeDetails.types != null) {
-            val topPlacesText = placeDetails.types.joinToString(", ") { it.name }
-            binding.placeAttractionsTextView.text = topPlacesText
-        } else {
-            binding.placeAttractionsTextView.visibility = View.GONE
-        }
-
-        // Update the place image (if available)
-        if (!placeDetails.photoMetadatas.isNullOrEmpty()) {
-            val photoMetadata = placeDetails.photoMetadatas[0] // You can choose which photo to display
+            if (!place.photoMetadata.isNullOrEmpty()) {
+                val photoMetadata = place.photoMetadata[0]
             val photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                .setMaxWidth(500) // Set the desired width of the image
-                .setMaxHeight(300) // Set the desired height of the image
+                .setMaxWidth(500)
+                .setMaxHeight(300)
                 .build()
 
             placesClient.fetchPhoto(photoRequest).addOnSuccessListener { fetchPhotoResponse ->
                 val bitmap = fetchPhotoResponse.bitmap
-                binding.placeImageView.setImageBitmap(bitmap)
+                binding.locationImage.setImageBitmap(bitmap)
             }.addOnFailureListener { exception ->
                 Log.e("LocationFragment", "Error loading photo: ${exception.message}")
             }
         } else {
-            // Hide or set a placeholder for the image if not available
-            binding.placeImageView.visibility = View.GONE
+            binding.locationImage.setImageResource(R.drawable.image_placeholder)
         }
+        };
 
-        // Update the title (if needed)
-        if (placeDetails.name != null) {
-            binding.placeNameTextView.text = placeDetails.name
-        } else {
-            // Handle the case where the name is not available
-            // You can set a default title or hide the title view
-        }
 
-        // Update opening hours (if available)
-        if (placeDetails.openingHours != null) {
-            val openingHoursText = placeDetails.openingHours.weekdayText.joinToString("\n")
-            binding.openingHoursTextView.text = openingHoursText
-        } else {
-            binding.openingHoursTextView.visibility = View.GONE
-        }
+        fetchPointsOfInterest("${place?.title} point of interest")
 
-        // Update rating (if available)
-        if (placeDetails.rating != null) {
-            binding.ratingBar.rating = placeDetails.rating.toFloat()
-            binding.ratingTextView.text = placeDetails.rating.toString()
-        } else {
-            binding.ratingBar.visibility = View.GONE
-            binding.ratingTextView.visibility = View.GONE
-        }
 
-        if (placeDetails.popularPlaces.isNotEmpty()) {
-            val popularPlacesText = placeDetails.popularPlaces.joinToString(", ")
-            binding.placeAttractionsTextView.text = popularPlacesText
-        } else {
-            binding.placeAttractionsTextView.visibility = View.GONE
+
+        placesAdapter = NearByPlacesAdapter(requireContext(), mutableListOf()) // Initialize with an empty list
+        placesList = view.findViewById(R.id.popularAttractions)
+        placesList.layoutManager = LinearLayoutManager(requireContext())
+        placesList.adapter = placesAdapter
+
+    }
+
+
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        // Example: Move the camera to the location from a Place ID
+        val placeId = searchViewModel.place.value?.id
+        val placeFields = listOf(Place.Field.LAT_LNG)
+
+        val request = placeId?.let { FetchPlaceRequest.newInstance(it, placeFields) }
+
+        if (request != null) {
+            placesClient.fetchPlace(request).addOnSuccessListener { response ->
+                val place = response.place
+                googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(place.latLng, 13f))
+
+                // Optionally, add a marker at the place's location
+                place.latLng?.let {
+                    googleMap?.addMarker(MarkerOptions().position(it).title(place.name))
+                }
+            }.addOnFailureListener { exception ->
+                // Handle exception
+            }
         }
     }
 
-    private fun logNearbyPlaces(latitude: Double, longitude: Double) {
-        // Define the types of nearby places you want to include (e.g., tourist attractions, museums, restaurants)
-        val nearbyPlaceTypes = listOf(Place.Field.TYPES) // You can specify more fields as needed
-
-        // Define the location bias based on latitude and longitude
-        val locationBias = RectangularBounds.newInstance(
-            LatLng(latitude - 0.1, longitude - 0.1), // Adjust the values as needed
-            LatLng(latitude + 0.1, longitude + 0.1)  // Adjust the values as needed
-        )
-
-        val request = FindCurrentPlaceRequest.builder(nearbyPlaceTypes)
-            .build()
-
-
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // Handle permission request
-            // TODO: Request location permissions here
-            return
-        }
-
-        placesClient.findCurrentPlace(request)
-            .addOnSuccessListener { response: FindCurrentPlaceResponse ->
-                val nearbyPlaces = response.placeLikelihoods
-
-                // Extract nearby places and popular attractions from the response
-                val nearbyPopularPlaces = mutableListOf<String>()
-
-                for (likelihood in nearbyPlaces) {
-                    val place = likelihood.place
-                    val placeName = place.name
-                    if (placeName != null) {
-                        nearbyPopularPlaces.add(placeName)
-                    }
-                }
-
-                // Update the UI with nearby popular places
-                updateNearbyPopularPlaces(nearbyPopularPlaces)
-            }
-            .addOnFailureListener { exception: Exception ->
-                if (exception is ApiException) {
-                    val statusCode = exception.statusCode
-                    Log.e("LocationFragment", "Nearby places search failed: ${exception.message}, statusCode: $statusCode")
-                }
-            }
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
     }
 
-    /*private fun searchPlacesByName(locationName: String) {
-        val apiKey = getString(R.string.google_maps_key) // Replace with your actual API key
-        val language = "en"
-        val query = URLEncoder.encode(locationName, "UTF-8") // Encode the locationName for the query
+    override fun onPause() {
+        mapView.onPause()
+        super.onPause()
+    }
 
-        // Create the API request URL
-        val apiUrl =
-            "https://maps.googleapis.com/maps/api/place/textsearch/json?query=$query&language=$language&key=$apiKey"
+    override fun onDestroy() {
+        mapView.onDestroy()
+        super.onDestroy()
+    }
 
-        // Make the API request in a Coroutine
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = placesApiService.searchPlaces(apiUrl, language, apiKey)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
+    }
 
-                // Check if the response is successful (HTTP 200-299)
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+
+    fun fetchPointsOfInterest(query: String) {
+        val call = googlePlacesApi.getPointsOfInterest(query, "en", getString(R.string.google_maps_key))
+        call.enqueue(object : Callback<PointsOfInterestResponse> {
+            override fun onResponse(
+                call: Call<PointsOfInterestResponse>,
+                response: Response<PointsOfInterestResponse>
+            ) {
+                Log.v("LocationFragment", "Response: $response")
                 if (response.isSuccessful) {
-                    val placesResponse = response.body()
+                    val pointsOfInterest = response.body()?.results?.take(10)
 
-                    // Handle the response here, e.g., update your UI with the results
-                    val places = placesResponse?.results
+                    Log.v("LocationFragment", "Points of interest: $pointsOfInterest")
+                    val placesList = mutableListOf<NearByPlace>()
+                    if (pointsOfInterest != null) {
+                        for (result in pointsOfInterest) {
 
-                    // Check if places is not null before updating your UI
-                    if (places != null) {
-                        // You can update your UI with the list of places here
-                        // For example, you can update a RecyclerView with the places data
-                        updateUIWithNearbyPlaces(places)
-                    } else {
-                        // Handle the case where places is null or empty
+                                val name = result.name
+                                val formattedAddress = result.formatted_address
+                                val placeId = result.place_id
+                                val photos = result.photos as? List<*>
+                                // Add the extracted data to the list
+                                val place = NearByPlace(name, formattedAddress, placeId, photos)
+                                placesList.add(place)
+//                            // Optionally, add a marker at the place's location
+                            LatLng(result.geometry.location.lat, result.geometry.location.lng)?.let {
+                                googleMap?.addMarker(MarkerOptions().position(it).title(name))
+                            }
+                        }
                     }
-                } else {
-                    // Handle the case where the HTTP request was not successful
-                    Log.e("LocationFragment", "API request failed with code: ${response.code()}")
+                    placesAdapter.updateData(placesList)
+
                 }
-            } catch (e: Exception) {
-                // Handle errors, e.g., network error or API error
-                Log.e("LocationFragment", "Error searching places: ${e.message}", e)
             }
-        }
-    }*/
 
-
-
-
-    private fun logPopularPlaces(popularPlaceIds: List<String>) {
-        Log.d("LocationFragment", "Nearby place IDs: ${popularPlaceIds.joinToString(", ")}")
-    }
-
-    private suspend fun updateUIWithNearbyPlaces(places: List<Place>) {
-        // Create a list of MyPlace objects from the retrieved Place objects
-        val nearbyPlaces = places.map { place ->
-            MyPlace(
-                name = place.name,
-                address = place.address,
-                photoMetadatas = place.photoMetadatas,
-                types = place.types,
-                openingHours = place.openingHours,
-                rating = place.rating
-            )
-        }
-
-        // Update the nearbyPlacesList on the main thread
-        withContext(Dispatchers.Main) {
-            nearbyPlacesList.clear()
-            nearbyPlacesList.addAll(nearbyPlaces)
-            popularPlacesAdapter.notifyDataSetChanged()
-        }
-    }
-
-
-    private fun updateNearbyPopularPlaces(placeIds: List<String>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val places = mutableListOf<MyPlace>()
-
-                for (placeId in placeIds) {
-                    val placeFields = listOf(
-                        Place.Field.ID,
-                        Place.Field.NAME,
-                        Place.Field.ADDRESS,
-                        Place.Field.PHOTO_METADATAS,
-                        Place.Field.TYPES,
-                        Place.Field.OPENING_HOURS,
-                        Place.Field.RATING
-                    )
-
-                    val request = FetchPlaceRequest.newInstance(placeId, placeFields)
-                    val response = placesClient.fetchPlace(request).await()
-                    val place = response.place
-
-                    // Convert Google Place to your custom Place model
-                    val myPlace = MyPlace(
-                        name = place.name,
-                        address = place.address,
-                        photoMetadatas = place.photoMetadatas,
-                        types = place.types,
-                        openingHours = place.openingHours,
-                        rating = place.rating
-                    )
-
-                    places.add(myPlace)
-                }
-
-                // Update the nearbyPlacesList on the main thread
-                withContext(Dispatchers.Main) {
-                    nearbyPlacesList.clear()
-                    nearbyPlacesList.addAll(places)
-                    popularPlacesAdapter.notifyDataSetChanged()
-                }
-            } catch (e: Exception) {
-                Log.e("LocationFragment", "Error fetching place details: ${e.message}", e)
+            override fun onFailure(call: Call<PointsOfInterestResponse>, t: Throwable) {
+                // Handle network error
             }
-        }
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        })
     }
 }
-
-data class PlaceDetails(
-    val name: String?,
-    val address: String?,
-    val photoMetadatas: List<PhotoMetadata>?,
-    val types: List<Place.Type>?,
-    val openingHours: OpeningHours?,
-    val rating: Double?,
-    val description: String?,
-    val popularPlaces: List<String>
-    // Add more fields as needed
-)
-data class MyPlace(
-    val name: String?,
-    val address: String?,
-    val photoMetadatas: List<PhotoMetadata>?,
-    val types: List<Place.Type>?,
-    val openingHours: OpeningHours?,
-    val rating: Double?
-    // Add other fields as needed
-)
-

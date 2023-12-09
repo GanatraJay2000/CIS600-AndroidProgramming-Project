@@ -1,6 +1,7 @@
 package com.example.project
 
 //import android.widget.Toolbar
+import MyDatabaseHelper
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
@@ -22,6 +24,10 @@ import com.example.project.auth.LoginActivity
 import com.example.project.databinding.ActivityMainBinding
 import com.example.project.helpers.SearchBottomSheetFragment
 import com.example.project.helpers.add_trip.AddTripFragment
+import com.example.project.helpers.search.SearchBottomSheetFragment
+import com.example.project.helpers.add_trip.AddTripFragment
+import com.example.project.helpers.search.SearchBottomSheetViewModel
+import com.example.project.models.Note
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.auth
@@ -34,12 +40,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var drawer_layout: DrawerLayout
     private lateinit var fab: FloatingActionButton
+    private lateinit var searchBottomSheetModel: SearchBottomSheetViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //drawer_layout = findViewById(R.id.drawer_layout)
-
-
+        searchBottomSheetModel = ViewModelProvider(this).get(SearchBottomSheetViewModel::class.java)
+        searchBottomSheetModel.turnOnNavigate()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -68,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         // reset navController graph when navigating
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // if destination.id not in an array of ids then show fab
-           val idArray = arrayOf(R.id.nav_trip, R.id.nav_profile)
+           val idArray = arrayOf(R.id.nav_trip, R.id.nav_profile, R.id.nav_location)
 
             if(!idArray.contains(destination.id))
                 fab.show()
@@ -94,6 +102,18 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+
+
+        val dbHelper = MyDatabaseHelper(this)
+        val newNote = Note(id = 1, description = "Sample Note")
+        val noteId = dbHelper.insertNote(newNote)
+        Log.v("MainActivity", "Note id: $noteId")
+        val notes = dbHelper.getAllNotes()
+        val updatedNote = Note(id = 1, description = "Updated Note")
+        val rowsAffected = dbHelper.updateNote(updatedNote)
+        Log.v("MainActivity", "Updated note affected: $rowsAffected")
+        val deletedNoteId = dbHelper.deleteNoteById(1)
+        Log.v("MainActivity", "Deleted note id: $deletedNoteId")
     }
 
     public fun signOut() {

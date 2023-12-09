@@ -1,30 +1,27 @@
 package com.example.project.helpers.add_trip
 
-import android.app.DatePickerDialog
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Observer
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.project.R
 import com.example.project.databinding.FragmentAddTripBinding
+import com.example.project.helpers.search.SearchBottomSheetFragment
+import com.example.project.helpers.search.SearchBottomSheetViewModel
 import com.example.project.databinding.FragmentLocationBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.textfield.TextInputEditText
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneOffset
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
 
 class AddTripFragment  : BottomSheetDialogFragment() {
     private var _binding: FragmentAddTripBinding? = null
@@ -38,6 +35,7 @@ class AddTripFragment  : BottomSheetDialogFragment() {
     }
 
     private lateinit var viewModel: AddTripViewModel
+    private lateinit var searchBottomSheetModel: SearchBottomSheetViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,16 +44,31 @@ class AddTripFragment  : BottomSheetDialogFragment() {
         _binding = FragmentAddTripBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
         return root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewModel = ViewModelProvider(this).get(AddTripViewModel::class.java)
+        searchBottomSheetModel = ViewModelProvider(requireActivity()).get(SearchBottomSheetViewModel::class.java)
+        searchBottomSheetModel.turnOffNavigate()
 
-        binding.closeButton.setOnClickListener { dismiss() }
+            binding.whereToEditText.setOnClickListener {
+                val searchBottomSheetFragment = SearchBottomSheetFragment()
+                searchBottomSheetFragment.show(parentFragmentManager, searchBottomSheetFragment.tag)
+            }
+        binding.whereToInputLayout.setOnClickListener {
+                val searchBottomSheetFragment = SearchBottomSheetFragment()
+                searchBottomSheetFragment.show(parentFragmentManager, searchBottomSheetFragment.tag)
+            }
+        searchBottomSheetModel.place.observe(viewLifecycleOwner, Observer {
+            binding.whereToEditText.setText(it.title)
+        })
 
+        binding.closeButton.setOnClickListener {
+            dismiss();
+            searchBottomSheetModel.turnOnNavigate()
+        }
     }
 
     override fun onStart() {
@@ -84,13 +97,11 @@ class AddTripFragment  : BottomSheetDialogFragment() {
             if (destination.isNotEmpty() && startDate.isNotEmpty() && endDate.isNotEmpty()) {
                 viewModel.setTripDetails(destination, startDate, endDate)
                 dismiss()
-                Log.v("AddTripFragment", "navigate to home")
+                Log.v("AddTripFragment", "navigate to trip fragment")
                 navigateToDestination(R.id.nav_trip)
             }
         }
     }
-
-
     private fun showDateRangePicker() {
         // Prepare the current selected dates as the initial selection for the picker
         val currentStartDateStr = binding.startDateEditText.text.toString()

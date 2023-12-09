@@ -13,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import com.example.project.R
 import com.example.project.databinding.FragmentTripBinding
+import com.example.project.helpers.search.SearchBottomSheetViewModel
 import com.example.project.models.Trip
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -31,6 +32,7 @@ class TripFragment : Fragment() {
     }
 
     private lateinit var viewModel: TripViewModel
+    private lateinit var searchBottomSheetModel: SearchBottomSheetViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +45,10 @@ class TripFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[TripViewModel::class.java]
+
+        viewModel = ViewModelProvider(this).get(TripViewModel::class.java)
+        searchBottomSheetModel = ViewModelProvider(requireActivity()).get(SearchBottomSheetViewModel::class.java)
+        searchBottomSheetModel.turnOnNavigate()
 
         val tripId = arguments?.getInt("tripId")
         if (tripId != null) {
