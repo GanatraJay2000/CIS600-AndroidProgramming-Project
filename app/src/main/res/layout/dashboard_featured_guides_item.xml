@@ -20,14 +20,15 @@
             android:layout_height="200dp"
             android:scaleType="centerCrop"
             android:src="@drawable/bg1"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/todo" />
 
         <TextView
             android:id="@+id/GuideCardTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Title"
+            android:text="@string/title"
             android:paddingHorizontal="8dp"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -37,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="Description"
+            android:text="@string/description"
             android:textSize="14sp" />
 
     </LinearLayout>

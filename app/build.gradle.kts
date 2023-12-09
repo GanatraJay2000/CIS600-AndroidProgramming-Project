@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("kotlin-kapt")
 }
 
 android {
@@ -64,6 +65,9 @@ dependencies {
 
     implementation("io.coil-kt:coil:2.3.0")
     implementation("androidx.privacysandbox.tools:tools-core:1.0.0-alpha06")
+    implementation("androidx.room:room-runtime:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
 
 

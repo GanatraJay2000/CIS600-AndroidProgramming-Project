@@ -13,7 +13,6 @@ import com.example.project.adapters.FeaturedGuidesAdapter
 import com.example.project.adapters.TopLocationsAdapter
 import com.example.project.databinding.FragmentHomeBinding
 import com.example.project.helpers.add_trip.AddTripFragment
-import com.example.project.helpers.search.SearchBottomSheetFragment
 import com.example.project.models.dummyGuides
 import com.example.project.models.dummyLocations
 

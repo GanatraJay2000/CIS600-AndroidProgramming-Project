@@ -1,21 +1,13 @@
 package com.example.project.ui.trip
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.project.R
 import com.example.project.adapters.TripOverviewSectionsAdapter
-import com.example.project.databinding.FragmentTripBinding
 import com.example.project.databinding.FragmentTripOverviewBinding
-import com.example.project.models.ChecklistItem
-import com.example.project.models.Note
-import com.example.project.models.Place
-import com.example.project.models.Section
-import com.example.project.models.SectionType
-import com.example.project.models.dummySections
 
 class TripOverviewFragment : Fragment() {
 

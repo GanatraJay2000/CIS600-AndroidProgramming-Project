@@ -10,7 +10,7 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dashboardBanner"
@@ -31,9 +31,10 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:contentDescription="@string/banner_image"
                 android:scaleType="centerCrop"
                 android:src="@drawable/bg1"
-                android:contentDescription="Banner Image" />
+                tools:ignore="ImageContrastCheck" />
 
             <View
                 android:layout_width="match_parent"
@@ -47,7 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="Plan your next Adventure"
+            android:text="@string/plan_your_next_adventure"
             android:fontFamily="@font/poppins_medium"
             android:textFontWeight="900"
             android:textColor="#FFF"
@@ -66,9 +67,10 @@
             android:layout_marginBottom="16dp"
             android:paddingHorizontal="32dp"
             android:paddingVertical="4dp"
-            android:text="Create Your Plan"
+            android:text="@string/create_your_plan"
             app:layout_constraintBottom_toBottomOf="@id/imageView"
-            app:layout_constraintStart_toStartOf="@id/imageView" />
+            app:layout_constraintStart_toStartOf="@id/imageView"
+            tools:ignore="TextContrastCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -79,7 +81,7 @@
         android:layout_marginTop="24dp"
         android:fontFamily="@font/poppins_medium"
         android:layout_marginStart="8dp"
-        android:text="Top Locations"
+        android:text="@string/top_locations"
         android:textColor="#000"
         android:textFontWeight="500"
         android:textSize="24sp"
@@ -101,7 +103,7 @@
         android:layout_marginTop="24dp"
         android:fontFamily="@font/poppins_medium"
         android:layout_marginStart="8dp"
-        android:text="Tourism Spots near you"
+        android:text="@string/tourism_spots_near_you"
         android:textColor="#000"
         android:textFontWeight="500"
         android:textSize="24sp"
@@ -123,7 +125,7 @@
         android:layout_marginTop="24dp"
         android:fontFamily="@font/poppins_medium"
         android:layout_marginStart="8dp"
-        android:text="Featured Guides from users"
+        android:text="@string/featured_guides_from_users"
         android:textColor="#000"
         android:textFontWeight="500"
         android:textSize="24sp"

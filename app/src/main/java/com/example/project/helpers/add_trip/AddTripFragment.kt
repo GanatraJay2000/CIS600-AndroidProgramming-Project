@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.project.R
 import com.example.project.databinding.FragmentAddTripBinding
 import com.example.project.databinding.FragmentLocationBinding
-import com.example.project.helpers.search.SearchBottomSheetFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

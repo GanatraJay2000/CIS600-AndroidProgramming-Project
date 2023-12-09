@@ -3,19 +3,17 @@ package com.example.project.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project.R
 import com.example.project.models.Checklist
-import com.example.project.models.ChecklistItem
-import com.example.project.models.Item
 import com.example.project.models.Note
 import com.example.project.models.Place
 import com.example.project.models.Section
-import com.example.project.models.SectionType
+import java.io.Serializable
+
 
 class TripOverviewSectionsAdapter(private val sections: List<Section>) : RecyclerView.Adapter<SectionViewHolder>() {
 
@@ -32,7 +30,7 @@ class TripOverviewSectionsAdapter(private val sections: List<Section>) : Recycle
 
     override fun getItemCount() = sections.size
 }
-class SectionItemsAdapter(private val items: List<Item>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SectionItemsAdapter(private val items: List<Serializable>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {
         return when (items[position]) {

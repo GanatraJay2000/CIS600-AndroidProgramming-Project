@@ -1,11 +1,10 @@
 package com.example.project.ui.trip
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.project.databinding.FragmentItineraryBinding
 import com.example.project.models.ItineraryDay
@@ -36,14 +35,13 @@ class ItineraryFragment : Fragment() {
         binding.itineraryViewPager.adapter = adapter
 
         TabLayoutMediator(binding.itineraryTabs, binding.itineraryViewPager) { tab, position ->
-            tab.text = formatDate(trip.itineraryDays[position].date)
+            tab.text = trip.itineraryDays[position].date?.let { formatDate(it) }
         }.attach()
     }
 
     private fun formatDate(date: Date): String {
         val dayFormat = SimpleDateFormat("d", Locale.US)
-        val dayInMonth = dayFormat.format(date).toInt()
-        val dayInMonthWithSuffix = when (dayInMonth) {
+        val dayInMonthWithSuffix = when (val dayInMonth = dayFormat.format(date).toInt()) {
             1, 21, 31 -> "${dayInMonth}st"
             2, 22 -> "${dayInMonth}nd"
             3, 23 -> "${dayInMonth}rd"

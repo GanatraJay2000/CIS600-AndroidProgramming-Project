@@ -33,4 +33,22 @@
     <string name="title_profile">Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="display_name">Display Name</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="location_name">Location Name</string>
+    <string name="close_button">Close Button</string>
+    <string name="plan_a_new_trip">Plan a new trip</string>
+    <string name="where_to">Where To?</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="start_planning">Start planning</string>
+    <string name="banner_image">Banner Image</string>
+    <string name="plan_your_next_adventure">Plan your next Adventure</string>
+    <string name="create_your_plan">Create Your Plan</string>
+    <string name="top_locations">Top Locations</string>
+    <string name="tourism_spots_near_you">Tourism Spots near you</string>
+    <string name="featured_guides_from_users">Featured Guides from users</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
 </resources>

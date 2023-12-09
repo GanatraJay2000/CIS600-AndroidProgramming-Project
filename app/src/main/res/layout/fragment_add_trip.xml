@@ -11,17 +11,18 @@
         android:id="@+id/closeButton"
         android:layout_width="36dp"
         android:layout_height="36dp"
+        android:contentDescription="@string/close_button"
         android:src="@drawable/cancel"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:contentDescription="Close Button"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RedundantDescriptionCheck" />
 
     <TextView
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Plan a new trip"
+        android:text="@string/plan_a_new_trip"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/closeButton"
@@ -46,8 +47,9 @@
             android:id="@+id/whereToEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Where To?"
-            android:inputType="text"/>
+            android:hint="@string/where_to"
+            android:inputType="text"
+            tools:ignore="TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
@@ -59,7 +61,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Start Date Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/startDateInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -75,17 +76,16 @@
                 android:id="@+id/startDateEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Start Date"
                 android:focusable="false"
-                android:inputType="none"/>
+                android:hint="@string/start_date"
+                android:inputType="none"
+                tools:ignore="TextContrastCheck" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Space between the date pickers -->
         <View
             android:layout_width="16dp"
             android:layout_height="0dp" />
 
-        <!-- End Date Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/endDateInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -101,9 +101,10 @@
                 android:id="@+id/endDateEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="End Date"
                 android:focusable="false"
-                android:inputType="none"/>
+                android:hint="@string/end_date"
+                android:inputType="none"
+                tools:ignore="TextContrastCheck" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
@@ -112,11 +113,12 @@
         android:id="@+id/startPlanningButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Start planning"
         android:layout_marginBottom="24dp"
+        android:text="@string/start_planning"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        tools:ignore="TextContrastCheck" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
