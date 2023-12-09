@@ -51,4 +51,5 @@
     <string name="tourism_spots_near_you">Tourism Spots near you</string>
     <string name="featured_guides_from_users">Featured Guides from users</string>
     <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="trip_delete">Delete</string>
 </resources>

@@ -40,7 +40,7 @@ class ProfileFragment : Fragment() {
             databaseHelper = MyDatabaseHelper(it)
         } ?: Log.e("ProfileFragment", "Context is null")
 
-        viewModel = ViewModelProvider(this, ProfileViewModelFactory(databaseHelper)).get(ProfileViewModel::class.java)
+        viewModel = ViewModelProvider(this, ProfileViewModelFactory(databaseHelper))[ProfileViewModel::class.java]
 
         userId?.let { uid ->
             viewModel.getTripsByUserId(uid.toInt())
@@ -63,9 +63,14 @@ class ProfileFragment : Fragment() {
             showImageSelectionDialog()
         }
 
-        tripAdapter = TripAdapter(mutableListOf()) { tripId ->
-            navigateToDestination(R.id.nav_trip, tripId)
-        }
+        tripAdapter = TripAdapter(mutableListOf(),
+            { tripId ->  // Handle trip click
+                navigateToDestination(R.id.nav_trip, tripId)
+            },
+            { tripId ->  // Handle trip delete
+                deleteTripById(tripId)
+            }
+        )
 
         binding.tripsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
@@ -75,6 +80,23 @@ class ProfileFragment : Fragment() {
         Log.v("ProfileFragment", Firebase.auth.currentUser?.photoUrl.toString())
         binding.profileImageView.load(Firebase.auth.currentUser?.photoUrl ?: R.drawable.profile_placeholder)
         binding.nameTextView.text = Firebase.auth.currentUser?.displayName ?: "Anonymous"
+    }
+
+    private fun deleteTripById(tripId: Int) {
+
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val userId = firebaseUser?.uid
+
+        val deletedRows = databaseHelper.deleteTripById(tripId)
+        if (deletedRows > 0) {
+            // Trip deleted successfully
+            if (userId != null) {
+                viewModel.getTripsByUserId(userId.toInt())
+            } // Assuming you have a method to refresh the trips list
+        } else {
+            // Failed to delete the trip
+            // Handle failure (e.g., show an error message)
+        }
     }
 
     fun updateProfileImage(imageUri: Uri) {

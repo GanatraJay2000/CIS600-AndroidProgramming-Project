@@ -12,10 +12,10 @@
         tools:ignore="UselessParent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingTop="16dp"
             android:id="@+id/sectionsRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:paddingTop="16dp" />
     </LinearLayout>
 
 </FrameLayout>

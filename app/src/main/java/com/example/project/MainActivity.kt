@@ -1,7 +1,6 @@
 package com.example.project
 
 //import android.widget.Toolbar
-import MyDatabaseHelper
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log

@@ -12,10 +12,8 @@ import com.example.project.R
 import com.example.project.adapters.ChecklistsAdapter
 import com.example.project.adapters.NotesAdapter
 import com.example.project.databinding.FragmentTripOverviewBinding
-import com.example.project.models.SectionType
 import com.example.project.models.dummyChecklistItems
 import com.example.project.models.dummyNotes
-import com.example.project.models.dummySections
 
 
 class TripOverviewFragment : Fragment() {
@@ -25,9 +23,6 @@ class TripOverviewFragment : Fragment() {
 
     private lateinit var notesAdapter: NotesAdapter
     private lateinit var checklistsAdapter: ChecklistsAdapter
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

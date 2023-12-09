@@ -1,3 +1,5 @@
+@file:Suppress("unused", "UNUSED_VARIABLE", "UNCHECKED_CAST")
+
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
@@ -155,7 +157,45 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
     """
         )
 
+        db.execSQL(
+            """
+                CREATE TABLE IF NOT EXISTS section_trip (
+    section_id INTEGER,
+    trip_id INTEGER,
+    UNIQUE(section_id, trip_id),
+    FOREIGN KEY(section_id) REFERENCES sections(id),
+    FOREIGN KEY(trip_id) REFERENCES trips(id)
+)
+            """
+        )
+
+        db.execSQL(
+            """
+                CREATE TABLE IF NOT EXISTS note_trip (
+    note_id INTEGER,
+    trip_id INTEGER,
+    UNIQUE(note_id, trip_id),
+    FOREIGN KEY(note_id) REFERENCES notes(id),
+    FOREIGN KEY(trip_id) REFERENCES trips(id)
+)
+            """
+        )
+
+
+        db.execSQL(
+            """
+CREATE TABLE IF NOT EXISTS checklist_trip (
+    checklist_id INTEGER,
+    trip_id INTEGER,
+    UNIQUE(checklist_id, trip_id),
+    FOREIGN KEY(checklist_id) REFERENCES checklist(id),
+    FOREIGN KEY(trip_id) REFERENCES trips(id)
+)
+            """
+        )
+
         // Reference table for Checklist - Sections relationship
+
         db.execSQL(
             """
     CREATE TABLE IF NOT EXISTS checklist_section (
@@ -180,6 +220,21 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
     )
     """
         )
+
+
+// Reference table for Place - Itenary relationship
+        db.execSQL(
+            """
+                CREATE TABLE IF NOT EXISTS place_itinerary (
+    place_id INTEGER,
+    itinerary_day_id INTEGER,
+    UNIQUE(place_id, itinerary_day_id),
+    FOREIGN KEY(place_id) REFERENCES places(id),
+    FOREIGN KEY(itinerary_day_id) REFERENCES itinerary_days(id)
+)
+            """
+        )
+
         // Reference table for ChecklistItem - Checklist relationship
         db.execSQL(
             """
@@ -884,4 +939,120 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
         val db = writableDatabase
         return db.delete("checklist_item_checklist", "checklist_item_id=? AND checklist_id=?", arrayOf(checklistItemId.toString(), checklistId.toString()))
     }
+
+    fun insertNoteTrip(noteId: Int, tripId: Int): Long {
+        val db = writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put("note_id", noteId)
+        contentValues.put("trip_id", tripId)
+        return db.insert("note_trip", null, contentValues)
+    }
+
+    @SuppressLint("Range")
+    fun getTripsForNote(noteId: Int): List<Int> {
+        val db = readableDatabase
+        val tripIds = mutableListOf<Int>()
+        val cursor = db.rawQuery("SELECT trip_id FROM note_trip WHERE note_id=?", arrayOf(noteId.toString()))
+
+        if (cursor.moveToFirst()) {
+            do {
+                tripIds.add(cursor.getInt(cursor.getColumnIndex("trip_id")))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return tripIds
+    }
+
+    fun updateNoteTrip(oldNoteId: Int, oldTripId: Int, newNoteId: Int, newTripId: Int): Int {
+        val db = writableDatabase
+        val contentValues = ContentValues().apply {
+            put("note_id", newNoteId)
+            put("trip_id", newTripId)
+        }
+        return db.update("note_trip", contentValues, "note_id=? AND trip_id=?", arrayOf(oldNoteId.toString(), oldTripId.toString()))
+    }
+
+    fun deleteNoteTrip(noteId: Int, tripId: Int): Int {
+        val db = writableDatabase
+        return db.delete("note_trip", "note_id=? AND trip_id=?", arrayOf(noteId.toString(), tripId.toString()))
+    }
+
+    fun insertChecklistTrip(checklistId: Int, tripId: Int): Long {
+        val db = writableDatabase
+        val contentValues = ContentValues().apply {
+            put("checklist_id", checklistId)
+            put("trip_id", tripId)
+        }
+        return db.insert("checklist_trip", null, contentValues)
+    }
+
+    @SuppressLint("Range")
+    fun getTripsForChecklist(checklistId: Int): List<Int> {
+        val db = readableDatabase
+        val tripIds = mutableListOf<Int>()
+        val cursor = db.rawQuery("SELECT trip_id FROM checklist_trip WHERE checklist_id=?", arrayOf(checklistId.toString()))
+
+        if (cursor.moveToFirst()) {
+            do {
+                tripIds.add(cursor.getInt(cursor.getColumnIndex("trip_id")))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return tripIds
+    }
+
+    fun updateChecklistTrip(oldChecklistId: Int, oldTripId: Int, newChecklistId: Int, newTripId: Int): Int {
+        val db = writableDatabase
+        val contentValues = ContentValues().apply {
+            put("checklist_id", newChecklistId)
+            put("trip_id", newTripId)
+        }
+        return db.update("checklist_trip", contentValues, "checklist_id=? AND trip_id=?", arrayOf(oldChecklistId.toString(), oldTripId.toString()))
+    }
+
+    fun deleteChecklistTrip(checklistId: Int, tripId: Int): Int {
+        val db = writableDatabase
+        return db.delete("checklist_trip", "checklist_id=? AND trip_id=?", arrayOf(checklistId.toString(), tripId.toString()))
+    }
+
+    fun insertPlaceItinerary(placeId: Int, itineraryDayId: Int): Long {
+        val db = writableDatabase
+        val contentValues = ContentValues().apply {
+            put("place_id", placeId)
+            put("itinerary_day_id", itineraryDayId)
+        }
+        return db.insert("place_itinerary", null, contentValues)
+    }
+
+    @SuppressLint("Range")
+    fun getPlacesForItineraryDay(itineraryDayId: Int): List<Int> {
+        val db = readableDatabase
+        val placeIds = mutableListOf<Int>()
+        val cursor = db.rawQuery("SELECT place_id FROM place_itinerary WHERE itinerary_day_id=?", arrayOf(itineraryDayId.toString()))
+
+        if (cursor.moveToFirst()) {
+            do {
+                placeIds.add(cursor.getInt(cursor.getColumnIndex("place_id")))
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return placeIds
+    }
+
+    fun updatePlaceItinerary(oldPlaceId: Int, oldItineraryDayId: Int, newPlaceId: Int, newItineraryDayId: Int): Int {
+        val db = writableDatabase
+        val contentValues = ContentValues().apply {
+            put("place_id", newPlaceId)
+            put("itinerary_day_id", newItineraryDayId)
+        }
+        return db.update("place_itinerary", contentValues, "place_id=? AND itinerary_day_id=?", arrayOf(oldPlaceId.toString(), oldItineraryDayId.toString()))
+    }
+
+    fun deletePlaceItinerary(placeId: Int, itineraryDayId: Int): Int {
+        val db = writableDatabase
+        return db.delete("place_itinerary", "place_id=? AND itinerary_day_id=?", arrayOf(placeId.toString(), itineraryDayId.toString()))
+    }
+
+
+
 }

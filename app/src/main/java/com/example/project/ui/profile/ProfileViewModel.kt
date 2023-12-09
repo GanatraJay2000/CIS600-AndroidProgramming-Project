@@ -1,6 +1,5 @@
 package com.example.project.ui.profile
 
-import MyDatabaseHelper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
