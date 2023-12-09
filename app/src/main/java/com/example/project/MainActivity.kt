@@ -14,13 +14,16 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.project.auth.LoginActivity
 import com.example.project.databinding.ActivityMainBinding
-import com.example.project.helpers.SearchBottomSheetFragment
+import com.example.project.helpers.add_trip.AddTripFragment
+import com.example.project.helpers.search.SearchBottomSheetFragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.auth
 
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var drawer_layout: DrawerLayout
+    private lateinit var fab: FloatingActionButton
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -47,7 +51,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_navigation)
 
-        binding.appBarMain.fab.setOnClickListener { view ->
+        fab = binding.appBarMain.fab
+        fab.setOnClickListener { view ->
             showContextMenu(view)
         }
 
@@ -62,7 +67,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         // reset navController graph when navigating
-        navController.addOnDestinationChangedListener { _, _, _ ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            // if destination.id not in an array of ids then show fab
+           val idArray = arrayOf(R.id.nav_trip, R.id.nav_profile)
+
+            if(!idArray.contains(destination.id))
+                fab.show()
+            else fab.hide()
+
+
+
             checkUserSignedIn()
             navController.graph = navController.navInflater.inflate(R.navigation.mobile_navigation)
         }
@@ -109,7 +123,20 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(destinationId, null, navOptions)
         }
     }
+    fun navigateToDestination(destinationId: Int, locationId: Int) {
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        val currentDestination = navController.currentDestination?.id
 
+        if (currentDestination != destinationId) {
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(navController.graph.startDestinationId, false)
+                .setEnterAnim(R.anim.slide_in_right)
+                .setExitAnim(R.anim.slide_out_left)
+                .build()
+            val bundle = Bundle().apply { putInt("locationId", locationId) }
+            navController.navigate(destinationId, bundle, navOptions)
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -122,6 +149,10 @@ class MainActivity : AppCompatActivity() {
             R.id.app_bar_search -> {
                 val searchBottomSheetFragment = SearchBottomSheetFragment()
                 searchBottomSheetFragment.show(supportFragmentManager, searchBottomSheetFragment.tag)
+                return true
+            }
+            R.id.profile -> {
+                navigateToDestination(R.id.nav_profile)
                 return true
             }
         }
@@ -141,7 +172,8 @@ class MainActivity : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.addTripPlan -> {
-                    navigateToDestination(R.id.nav_slideshow)
+                    val addTripFragment = AddTripFragment()
+                    addTripFragment.show(supportFragmentManager, addTripFragment.tag)
                     true
                 }
                 R.id.addTravelogue -> {

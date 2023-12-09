@@ -106,7 +106,9 @@ class LocationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLocationBinding.inflate(inflater, container, false)
-        return binding.root
+        val root: View = binding.root
+
+        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -33,12 +33,25 @@
         android:label="activity_sign_up"
         tools:layout="@layout/activity_sign_up" />
     <fragment
-        android:id="@+id/locationFragment"
+        android:id="@+id/nav_location"
         android:name="com.example.project.ui.location.LocationFragment"
-        android:label="fragment_location"
+        android:label="Location"
         tools:layout="@layout/fragment_location">
         <argument
             android:name="locationId"
             app:argType="integer"/>
     </fragment>
+    <fragment
+        android:id="@+id/nav_trip"
+        android:name="com.example.project.ui.trip.TripFragment"
+        android:label="Plan your Trip"
+        tools:layout="@layout/fragment_trip" >
+        <argument
+            android:name="tripId"
+            app:argType="com.example.project.models.Trip" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.example.project.ui.profile.ProfileFragment"
+        android:label="Profile" />
 </navigation>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- trip_item.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/imageViewTrip"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/bg1"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/textViewTripTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_gravity="center_vertical"
+        android:textSize="18sp"
+        android:text="Trip Title" />
+</LinearLayout>

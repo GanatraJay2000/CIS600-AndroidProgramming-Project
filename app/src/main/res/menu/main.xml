@@ -8,9 +8,9 @@
         android:title="Search"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/profile"
         android:orderInCategory="101"
-        android:icon="@drawable/baseline_people_24"
+        android:icon="@drawable/person_outline"
         android:title="@string/action_followers"
         app:showAsAction="always" />
 </menu>

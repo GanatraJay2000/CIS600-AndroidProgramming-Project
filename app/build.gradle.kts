@@ -55,6 +55,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-common-ktx:20.4.2")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("com.google.android.libraries.places:places:3.3.0")

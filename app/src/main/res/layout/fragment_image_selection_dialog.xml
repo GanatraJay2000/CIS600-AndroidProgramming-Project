@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- image_selection_dialog.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/buttonChooseFromGallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose from Gallery" />
+
+    <Button
+        android:id="@+id/buttonTakePhoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Take Photo"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>
