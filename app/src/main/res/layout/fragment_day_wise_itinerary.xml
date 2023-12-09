@@ -12,7 +12,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:paddingTop="16dp"
-            android:id="@+id/sectionsRecyclerView"
+            android:id="@+id/placesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>

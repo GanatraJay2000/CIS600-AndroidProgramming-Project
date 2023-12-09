@@ -13,10 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import com.example.project.R
 import com.example.project.adapters.TripAdapter
-import com.example.project.adapters.TripOverviewSectionsAdapter
 import com.example.project.databinding.FragmentProfileBinding
 import com.example.project.helpers.profile_picture_dialog.ImageSelectionDialogFragment
-import com.example.project.models.dummySections
 import com.example.project.models.dummyTrips
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -46,7 +44,7 @@ class ProfileFragment : Fragment() {
         // Initialize RecyclerView for trips
         binding.tripsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = TripAdapter(dummyTrips) { tripId ->
+            adapter = TripAdapter(requireContext(), dummyTrips) { tripId ->
                 navigateToDestination(R.id.nav_trip, tripId)
             }
         }

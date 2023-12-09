@@ -1,7 +1,7 @@
 package com.example.project
 
 //import android.widget.Toolbar
-import MyDatabaseHelper
+//import MyDatabaseHelper
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -100,18 +100,6 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
-
-
-        val dbHelper = MyDatabaseHelper(this)
-        val newNote = Note(id = 1, description = "Sample Note")
-        val noteId = dbHelper.insertNote(newNote)
-        Log.v("MainActivity", "Note id: $noteId")
-        val notes = dbHelper.getAllNotes()
-        val updatedNote = Note(id = 1, description = "Updated Note")
-        val rowsAffected = dbHelper.updateNote(updatedNote)
-        Log.v("MainActivity", "Updated note affected: $rowsAffected")
-        val deletedNoteId = dbHelper.deleteNoteById(1)
-        Log.v("MainActivity", "Deleted note id: $deletedNoteId")
     }
 
     public fun signOut() {

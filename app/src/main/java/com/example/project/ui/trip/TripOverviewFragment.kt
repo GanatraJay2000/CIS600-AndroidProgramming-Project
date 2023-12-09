@@ -6,22 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.project.R
-import com.example.project.adapters.TripOverviewSectionsAdapter
-import com.example.project.databinding.FragmentTripBinding
+import com.example.project.adapters.ChecklistsAdapter
+import com.example.project.adapters.NotesAdapter
 import com.example.project.databinding.FragmentTripOverviewBinding
-import com.example.project.models.ChecklistItem
-import com.example.project.models.Note
-import com.example.project.models.Place
-import com.example.project.models.Section
-import com.example.project.models.SectionType
-import com.example.project.models.dummySections
+import com.example.project.models.dummyChecklists
+import com.example.project.models.dummyNotes
 
 class TripOverviewFragment : Fragment() {
 
     private var _binding: FragmentTripOverviewBinding? = null
     private val binding get() = _binding!!
-    private lateinit var overviewAdapter: TripOverviewSectionsAdapter
+
+    private lateinit var notesAdapter: NotesAdapter
+    private lateinit var checklistsAdapter: ChecklistsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -38,12 +36,19 @@ class TripOverviewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-
-        overviewAdapter = TripOverviewSectionsAdapter(dummySections)
-        binding.sectionsRecyclerView.apply {
+        notesAdapter = NotesAdapter(dummyNotes)
+        binding.notesRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = overviewAdapter
+            adapter = notesAdapter
         }
+
+        checklistsAdapter = ChecklistsAdapter(dummyChecklists)
+        binding.checklistRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = checklistsAdapter
+        }
+
+
     }
 
     companion object {
