@@ -1,5 +1,6 @@
-package com.example.project.helpers.search
+package com.example.project.helpers
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,16 +8,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project.R
 import com.example.project.adapters.SearchResultsAdapter
 import com.example.project.ui.location.LocationFragment
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.google.android.libraries.places.api.model.Place
@@ -26,7 +28,6 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.squareup.okhttp.Call
 import com.squareup.okhttp.Callback
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
@@ -46,7 +47,6 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
     private val searchResultsList = mutableListOf<AutocompletePrediction>()
 
     companion object {
-        fun newInstance() = SearchBottomSheetFragment()
         private const val TAG = "SearchBottomSheetFragment"
     }
 
@@ -67,7 +67,7 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
             autoCompleteTextView.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                     searchResultsRecyclerView.visibility = View.VISIBLE
-                    findViewById<View>(R.id.frag_maps)?.visibility = View.GONE
+                    this@apply.findViewById<View>(R.id.frag_maps)?.visibility = View.GONE
                     findViewById<View>(R.id.frag_maps)?.layoutParams?.height = ViewGroup.LayoutParams.WRAP_CONTENT
                 }
 
@@ -89,71 +89,13 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
         }
     }
 
-    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // Initialize the Places SDK with the context and your API key
-        Places.initialize(requireContext(), "AIzaSyBvQIUByA2GmXPnNMZ51hNtVHDhBLMAvoI")
-
-        // Create the PlacesClient
-        placesClient = Places.createClient(requireContext())
-
-        autoCompleteTextView = view.findViewById(R.id.autoCompleteTextView)
-        searchResultsRecyclerView = view.findViewById(R.id.searchResultsRecyclerView)
-
-        // Initialize the search results adapter with an empty list and a click listener
-        searchResultsAdapter = SearchResultsAdapter(searchResultsList) { prediction ->
-            // Handle the click event here
-            onSearchResultClick(prediction)
-        }
-
-        autoCompleteTextView.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // No action needed here
-                searchResultsRecyclerView.visibility = View.VISIBLE
-                view.findViewById<View>(R.id.frag_maps)?.visibility = View.GONE
-                view.findViewById<View>(R.id.frag_maps)?.layoutParams?.height = ViewGroup.LayoutParams.WRAP_CONTENT
-
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Perform a search every time the text changes
-                if (!s.isNullOrEmpty()) {
-                    performSearch(s.toString())
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                // No action needed here
-            }
-        })
-
-        // Set up RecyclerView with the adapter
-        searchResultsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        searchResultsRecyclerView.adapter = searchResultsAdapter
-
-        autoCompleteTextView.setOnEditorActionListener { _, _, _ ->
-            // Handle search action here and update search results
-            val query = autoCompleteTextView.text.toString()
-            performSearch(query) // Update searchResultsList with your search results
-            true
-        }
-
-        view.findViewById<Button>(R.id.closeButton).setOnClickListener {
-            dismiss()
-        }
-    }
-
-        view.findViewById<ImageButton>(R.id.closeButton).setOnClickListener {
-            dismiss()
-        }
-    }*/
-
-
     private fun onSearchResultClick(prediction: AutocompletePrediction) {
+        // Close the keyboard
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
 
-        view?.findViewById<FrameLayout>(R.id.frag_maps)?.visibility = View.VISIBLE
+        // Rest of your code for handling the search result click
+        this.view?.findViewById<FrameLayout>(R.id.frag_maps)?.visibility = View.VISIBLE
         searchResultsRecyclerView.visibility = View.GONE
         view?.findViewById<FrameLayout>(R.id.frag_maps)?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
 
@@ -161,7 +103,7 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
         val placeFields = listOf(
             Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS,
             Place.Field.PHOTO_METADATAS, Place.Field.TYPES,
-            Place.Field.OPENING_HOURS, Place.Field.RATING
+            Place.Field.OPENING_HOURS, Place.Field.RATING, Place.Field.LAT_LNG // Include LAT_LNG field
         )
 
         val request = FetchPlaceRequest.newInstance(placeId, placeFields)
@@ -169,9 +111,14 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
             val place = response.place
 
             // Extracting place types as popular places for demonstration
-            val popularPlaces = place.types?.map { it.name } ?: listOf()
+            val popularPlaces = place.types
+                ?.map { it.name } ?: listOf()
 
-            navigateToPlaceDetailsFragment(place, popularPlaces)
+            val latLng = place.latLng // Get the LatLng
+            val locationName = place.name // Get the name of the location
+
+            // Pass the place, popular places, latLng, and locationName to LocationFragment
+            navigateToPlaceDetailsFragment(place, popularPlaces, latLng, locationName)
         }.addOnFailureListener { exception: Exception ->
             if (exception is ApiException) {
                 Log.e(TAG, "Place not found: " + exception.message + ", statusCode: " + exception.statusCode)
@@ -179,13 +126,16 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun navigateToPlaceDetailsFragment(place: Place, popularPlaces: List<String>) {
-        val fragment = LocationFragment.newInstance(place, popularPlaces)
+
+    private fun navigateToPlaceDetailsFragment(place: Place, popularPlaces: List<String>, latLng: LatLng?, locationName: String?) {
+        val fragment = LocationFragment.newInstance(place, popularPlaces, latLng?.latitude, latLng?.longitude, locationName)
         childFragmentManager.beginTransaction()
             .replace(R.id.frag_maps, fragment)
             .addToBackStack(null)
             .commit()
     }
+
+
 
 
     // Implement the performSearch function to fetch search results based on the query
@@ -198,27 +148,42 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun fetchCoordinates(query: String, callback: (String) -> Unit) {
         val encodedQuery = URLEncoder.encode(query, "UTF-8")
-        val url = "https://maps.googleapis.com/maps/api/place/findplcacefromtext/json?input=$encodedQuery&inputtype=textquery&fields=geometry/location&key=AIzaSyBvQIUByA2GmXPnNMZ51hNtVHDhBLMAvoI"
+        val url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=$encodedQuery&inputtype=textquery&fields=geometry/location&key=AIzaSyBvQIUByA2GmXPnNMZ51hNtVHDhBLMAvoI"
 
         val request = Request.Builder().url(url).build()
         okHttpClient.newCall(request).enqueue(object : Callback {
             override fun onResponse(response: Response?) {
                 if (response != null) {
-                    response.body()?.string()?.let { responseBody ->
-                        val jsonObject = JSONObject(responseBody)
-                        val candidates = jsonObject.getJSONArray("candidates")
-                        if (candidates.length() > 0) {
-                            val location = candidates.getJSONObject(0).getJSONObject("geometry").getJSONObject("location")
-                            val lat = location.getDouble("lat")
-                            val lng = location.getDouble("lng")
-                            val latLng = "$lat,$lng"
-                            callback(latLng)
+                    if (response.isSuccessful) {
+                        response.body()?.string()?.let { responseBody ->
+                            val jsonObject = JSONObject(responseBody)
+                            val candidates = jsonObject.getJSONArray("candidates")
+                            if (candidates.length() > 0) {
+                                val location = candidates.getJSONObject(0).getJSONObject("geometry").getJSONObject("location")
+                                val lat = location.getDouble("lat")
+                                val lng = location.getDouble("lng")
+                                val latLng = "$lat,$lng"
+                                callback(latLng)
+
+                                // Log success
+                                Log.d(TAG, "Coordinates fetched successfully: $latLng")
+                            } else {
+                                // Log that no candidates were found
+                                Log.w(TAG, "No candidates found in the response")
+                            }
                         }
+                    } else {
+                        // Log failure with response code
+                        Log.e(TAG, "Fetch coordinates request failed with response code: ${response.code()}")
                     }
+                } else {
+                    // Log failure with no response
+                    Log.e(TAG, "No response received")
                 }
             }
 
             override fun onFailure(request: Request?, e: IOException?) {
+                // Log failure
                 Log.e(TAG, "Fetch coordinates request failed", e)
             }
         })
@@ -238,18 +203,27 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
                             activity?.runOnUiThread {
                                 updateSearchResults(places)
                             }
+
+                            // Log success
+                            Log.d(TAG, "Nearby search successful")
                         }
                     } else {
+                        // Log failure with response code
                         Log.e(TAG, "Nearby search request failed with response code: ${response.code()}")
                     }
+                } else {
+                    // Log failure with no response
+                    Log.e(TAG, "No response received")
                 }
             }
 
             override fun onFailure(request: Request?, e: IOException?) {
+                // Log failure
                 Log.e(TAG, "Nearby search request failed", e)
             }
         })
     }
+
 
     private fun parsePlaces(jsonResponse: String): List<AutocompletePrediction> {
         val jsonObject = JSONObject(jsonResponse)
@@ -274,9 +248,12 @@ class SearchBottomSheetFragment : BottomSheetDialogFragment() {
     // Update searchResultsList with the fetched search results
     private fun updateSearchResults(results: List<AutocompletePrediction>) {
         Log.d(TAG, "Updating search results: ${results.size} items found.")
+        Log.d("main results", "search results: $results items found.")
         searchResultsList.clear()
         searchResultsList.addAll(results)
-        searchResultsAdapter.notifyDataSetChanged()
+        searchResultsAdapter.run {
+            notifyDataSetChanged()
+        }
     }
 
     override fun onStart() {
