@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity() {
         Log.v("MainActivity", "Updated note affected: $rowsAffected")
         val deletedNoteId = dbHelper.deleteNoteById(1)
         Log.v("MainActivity", "Deleted note id: $deletedNoteId")
+        dbHelper.close()
     }
 
     public fun signOut() {

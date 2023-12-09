@@ -72,6 +72,49 @@ data class ItineraryDay(
     val sections: List<Section>
 ) : Serializable
 
+val dummyNotes = listOf<Note>(
+    Note(
+        1,
+        "Note1 about the trip"
+    ),
+    Note(
+        2,
+        "Note2 about the trip"
+    ),
+    Note(
+        3,
+        "Note3 about the trip"
+    ),
+    Note(
+        4,
+        "Note4 about the trip"
+    ),
+
+)
+
+val dummyChecklistItems = listOf<ChecklistItem>(
+    ChecklistItem(
+        1,
+        "Pack bags",
+        false
+    ),
+    ChecklistItem(
+        2,
+        "Pack bags",
+        false
+    ),
+    ChecklistItem(
+        3,
+        "Pack bags",
+        false
+    ),
+    ChecklistItem(
+        4,
+        "Pack bags",
+        false
+    ),
+)
+
 val dummySections = listOf(
     Section(
         1,
@@ -82,13 +125,6 @@ val dummySections = listOf(
             Note(2, "Note2 about the trip"),
             Note(3, "Note3 about the trip"),
             Note(4, "Note4 about the trip"),
-            Checklist(
-                5,
-                "Checklist1",
-                listOf(
-                    ChecklistItem(1, "Pack bags", false),
-                )
-            )
         )
     ),
     Section(2, "Checklist", SectionType.CHECKLIST, listOf(Checklist(1, "Checklist1", listOf(ChecklistItem(1, "Pack bags", false))))),

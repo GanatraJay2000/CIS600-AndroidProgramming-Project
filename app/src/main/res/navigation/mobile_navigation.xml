@@ -54,4 +54,9 @@
         android:id="@+id/nav_profile"
         android:name="com.example.project.ui.profile.ProfileFragment"
         android:label="Profile" />
+    <dialog
+        android:id="@+id/addTripFragment"
+        android:name="com.example.project.helpers.add_trip.AddTripFragment"
+        android:label="fragment_add_trip"
+        tools:layout="@layout/fragment_add_trip" />
 </navigation>
