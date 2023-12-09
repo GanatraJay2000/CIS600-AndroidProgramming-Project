@@ -14,15 +14,14 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.project.auth.LoginActivity
 import com.example.project.databinding.ActivityMainBinding
-import com.example.project.helpers.add_trip.AddTripFragment
 import com.example.project.helpers.search.SearchBottomSheetFragment
+import com.example.project.helpers.add_trip.AddTripFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.auth

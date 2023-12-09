@@ -5,18 +5,6 @@ data class PlacesResponse(
     val results: List<Place>,
     // Add other fields as needed
 )
-data class Place(
-    val name: String,
-    val address: String,
-    val geometry: Geometry,
-    val icon: String,
-    val photos: List<Photo>,
-    val place_id: String,
-    val rating: Double,
-    val types: List<String>,
-    val user_ratings_total: Int,
-    // Add other fields as needed
-)
 
 data class Geometry(
     val location: GeoLocation,

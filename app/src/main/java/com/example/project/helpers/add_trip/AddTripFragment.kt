@@ -1,10 +1,8 @@
 package com.example.project.helpers.add_trip
 
-import android.app.DatePickerDialog
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,20 +10,13 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.project.R
 import com.example.project.databinding.FragmentAddTripBinding
-import com.example.project.databinding.FragmentLocationBinding
-import com.example.project.helpers.search.SearchBottomSheetFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.textfield.TextInputEditText
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneOffset
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
 
 class AddTripFragment  : BottomSheetDialogFragment() {
     private var _binding: FragmentAddTripBinding? = null
