@@ -22,10 +22,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.project.auth.LoginActivity
 import com.example.project.databinding.ActivityMainBinding
-import com.example.project.helpers.SearchBottomSheetFragment
 import com.example.project.helpers.add_trip.AddTripFragment
 import com.example.project.helpers.search.SearchBottomSheetFragment
-import com.example.project.helpers.add_trip.AddTripFragment
 import com.example.project.helpers.search.SearchBottomSheetViewModel
 import com.example.project.models.Note
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -105,11 +103,11 @@ class MainActivity : AppCompatActivity() {
 
 
         val dbHelper = MyDatabaseHelper(this)
-        val newNote = Note(id = 1, description = "Sample Note")
+        val newNote = Note(id = 1, description = "Sample Note","")
         val noteId = dbHelper.insertNote(newNote)
         Log.v("MainActivity", "Note id: $noteId")
         val notes = dbHelper.getAllNotes()
-        val updatedNote = Note(id = 1, description = "Updated Note")
+        val updatedNote = Note(id = 1, description = "Updated Note", "")
         val rowsAffected = dbHelper.updateNote(updatedNote)
         Log.v("MainActivity", "Updated note affected: $rowsAffected")
         val deletedNoteId = dbHelper.deleteNoteById(1)

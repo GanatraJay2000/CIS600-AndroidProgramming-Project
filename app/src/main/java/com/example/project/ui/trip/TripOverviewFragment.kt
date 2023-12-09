@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project.adapters.TripOverviewSectionsAdapter
 import com.example.project.databinding.FragmentTripOverviewBinding
+import com.example.project.models.dummySections
 
 class TripOverviewFragment : Fragment() {
 

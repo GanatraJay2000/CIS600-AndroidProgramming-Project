@@ -15,6 +15,7 @@ import com.example.project.R
 import com.example.project.databinding.FragmentTripBinding
 import com.example.project.helpers.search.SearchBottomSheetViewModel
 import com.example.project.models.Trip
+import com.example.project.models.dummyTrips
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 

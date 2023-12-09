@@ -26,7 +26,7 @@ class DayWiseItineraryFragment : Fragment() {
 
         binding.sectionsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = TripOverviewSectionsAdapter(itineraryDay!!.tripId)
+            adapter = TripOverviewSectionsAdapter(itineraryDay?.sections ?: emptyList())
         }
 
         return binding.root
