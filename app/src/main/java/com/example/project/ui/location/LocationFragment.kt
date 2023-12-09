@@ -1,5 +1,6 @@
 package com.example.project.ui.location
 
+import PlacesService
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -12,7 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project.R
 import com.example.project.adapters.PopularPlacesAdapter
-import com.example.project.api.PlacesService
 import com.example.project.databinding.FragmentLocationBinding
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.model.LatLng
@@ -315,16 +315,16 @@ class LocationFragment : Fragment() {
     /*private fun searchPlacesByName(locationName: String) {
         val apiKey = getString(R.string.google_maps_key) // Replace with your actual API key
         val language = "en"
-        val fields = "name,formatted_address,photos,types,opening_hours,rating" // Specify the fields you want
+        val query = URLEncoder.encode(locationName, "UTF-8") // Encode the locationName for the query
 
-        // Encode the locationName for the query
-        val encodedQuery = URLEncoder.encode(locationName, "UTF-8")
+        // Create the API request URL
+        val apiUrl =
+            "https://maps.googleapis.com/maps/api/place/textsearch/json?query=$query&language=$language&key=$apiKey"
 
         // Make the API request in a Coroutine
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // Call the searchPlaces function from your PlacesService
-                val response = placesApiService.searchPlaces(encodedQuery, language, fields, apiKey)
+                val response = placesApiService.searchPlaces(apiUrl, language, apiKey)
 
                 // Check if the response is successful (HTTP 200-299)
                 if (response.isSuccessful) {
@@ -351,6 +351,8 @@ class LocationFragment : Fragment() {
             }
         }
     }*/
+
+
 
 
     private fun logPopularPlaces(popularPlaceIds: List<String>) {
