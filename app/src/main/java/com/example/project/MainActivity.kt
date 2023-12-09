@@ -103,11 +103,11 @@ class MainActivity : AppCompatActivity() {
 
 
         val dbHelper = MyDatabaseHelper(this)
-        val newNote = Note(id = 1, description = "Sample Note","")
+        val newNote = Note(id = 1, description = "Sample Note")
         val noteId = dbHelper.insertNote(newNote)
         Log.v("MainActivity", "Note id: $noteId")
         val notes = dbHelper.getAllNotes()
-        val updatedNote = Note(id = 1, description = "Updated Note", "")
+        val updatedNote = Note(id = 1, description = "Updated Note")
         val rowsAffected = dbHelper.updateNote(updatedNote)
         Log.v("MainActivity", "Updated note affected: $rowsAffected")
         val deletedNoteId = dbHelper.deleteNoteById(1)
