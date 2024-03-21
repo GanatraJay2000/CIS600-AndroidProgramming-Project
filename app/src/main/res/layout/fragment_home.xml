@@ -8,138 +8,114 @@
     tools:context=".ui.home.HomeFragment">
 
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/dashboardBanner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/imageView"
-            android:layout_width="0dp"
-            android:layout_height="300dp"
-            app:layout_constraintTop_toTopOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dashboardBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/banner_image"
-                android:scaleType="centerCrop"
-                android:src="@drawable/bg1"
-                tools:ignore="ImageContrastCheck" />
+            <FrameLayout
+                android:id="@+id/imageView"
+                android:layout_width="0dp"
+                android:layout_height="300dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#66000000" />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/bg1"
+                    android:contentDescription="Banner Image" />
 
-        </FrameLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#66000000" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="Plan your next Adventure"
+                android:fontFamily="@font/poppins_medium"
+                android:textFontWeight="900"
+                android:textColor="#FFF"
+                android:textSize="32sp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toStartOf="@id/imageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/cypButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cypButton"
+                style="@style/Widget.MaterialComponents.Button.Pill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="16dp"
+                android:paddingHorizontal="32dp"
+                android:paddingVertical="4dp"
+                android:text="Create Your Plan"
+                app:layout_constraintBottom_toBottomOf="@id/imageView"
+                app:layout_constraintStart_toStartOf="@id/imageView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/topLocationsTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@string/plan_your_next_adventure"
+            android:layout_marginTop="24dp"
             android:fontFamily="@font/poppins_medium"
-            android:textFontWeight="900"
-            android:textColor="#FFF"
-            android:textSize="32sp"
             android:layout_marginStart="8dp"
-            app:layout_constraintStart_toStartOf="@id/imageView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/cypButton" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/cypButton"
-            style="@style/Widget.MaterialComponents.Button.Pill"
-            android:layout_width="wrap_content"
+            android:text="Top Locations"
+            android:textColor="#000"
+            android:textFontWeight="500"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dashboardBanner" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginStart="8dp"
+            android:id="@+id/dashboardTopLocations"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topLocationsTitle" />
+
+        <TextView
+            android:id="@+id/spotsNearMeTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/poppins_medium"
             android:layout_marginStart="8dp"
-            android:layout_marginBottom="16dp"
-            android:paddingHorizontal="32dp"
-            android:paddingVertical="4dp"
-            android:text="@string/create_your_plan"
-            app:layout_constraintBottom_toBottomOf="@id/imageView"
-            app:layout_constraintStart_toStartOf="@id/imageView"
-            tools:ignore="TextContrastCheck" />
+            android:text="Tourism Spots near you"
+            android:textColor="#000"
+            android:textFontWeight="500"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dashboardTopLocations" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginStart="8dp"
+            android:id="@+id/dashboardNearbyLocations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spotsNearMeTitle" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/topLocationsTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/poppins_medium"
-        android:layout_marginStart="8dp"
-        android:text="@string/top_locations"
-        android:textColor="#000"
-        android:textFontWeight="500"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dashboardBanner" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginStart="8dp"
-        android:id="@+id/dashboardTopLocations"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topLocationsTitle" />
-
-    <TextView
-        android:id="@+id/spotsNearMeTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/poppins_medium"
-        android:layout_marginStart="8dp"
-        android:text="@string/tourism_spots_near_you"
-        android:textColor="#000"
-        android:textFontWeight="500"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dashboardTopLocations" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginStart="8dp"
-        android:id="@+id/dashboardSpotsNearMe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spotsNearMeTitle" />
-
-    <TextView
-        android:id="@+id/featuredGuidesTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/poppins_medium"
-        android:layout_marginStart="8dp"
-        android:text="@string/featured_guides_from_users"
-        android:textColor="#000"
-        android:textFontWeight="500"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dashboardTopLocations" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginStart="8dp"
-        android:id="@+id/dashboardFeaturedGuides"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/featuredGuidesTitle" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

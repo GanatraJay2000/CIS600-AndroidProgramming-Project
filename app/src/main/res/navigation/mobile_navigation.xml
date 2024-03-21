@@ -7,56 +7,22 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.project.ui.home.HomeFragment"
+        android:name="com.example.travelease.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
-
-    <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.project.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.project.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
-    <activity
-        android:id="@+id/loginActivity"
-        android:name="com.example.project.auth.LoginActivity"
-        android:label="activity_login"
-        tools:layout="@layout/activity_login" />
-    <activity
-        android:id="@+id/signUpActivity"
-        android:name="com.example.project.auth.SignUpActivity"
-        android:label="activity_sign_up"
-        tools:layout="@layout/activity_sign_up" />
     <fragment
         android:id="@+id/nav_location"
-        android:name="com.example.project.ui.location.LocationFragment"
+        android:name="com.example.travelease.ui.location.LocationFragment"
         android:label="Location"
-        tools:layout="@layout/fragment_location">
-        <argument
-            android:name="locationId"
-            app:argType="integer"/>
-    </fragment>
-    <fragment
-        android:id="@+id/nav_trip"
-        android:name="com.example.project.ui.trip.TripFragment"
-        android:label="Plan your Trip"
-        tools:layout="@layout/fragment_trip" >
-        <argument
-            android:name="tripId"
-            app:argType="com.example.project.room.Trip" />
-    </fragment>
+        tools:layout="@layout/fragment_location" />
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.example.project.ui.profile.ProfileFragment"
+        android:name="com.example.travelease.ui.profile.ProfileFragment"
         android:label="Profile" />
-    <dialog
-        android:id="@+id/addTripFragment"
-        android:name="com.example.project.helpers.add_trip.AddTripFragment"
-        android:label="fragment_add_trip"
-        tools:layout="@layout/fragment_add_trip" />
+    <fragment
+        android:id="@+id/nav_trip"
+        android:name="com.example.travelease.ui.trip.TripFragment"
+        android:label="Trip Plan"
+        tools:layout="@layout/fragment_trip" />
+
 </navigation>

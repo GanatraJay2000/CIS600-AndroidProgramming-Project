@@ -6,16 +6,15 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:src="@drawable/profile_placeholder"
-    android:layout_gravity="center"
-    android:contentDescription="Profile image"
-    android:clickable="true"
-    android:focusable="true" />
-
+        android:layout_gravity="center"
+        android:contentDescription="Profile image"
+        android:clickable="true"
+        android:focusable="true" />
     <TextView
         android:id="@+id/nameTextView"
         android:layout_width="wrap_content"

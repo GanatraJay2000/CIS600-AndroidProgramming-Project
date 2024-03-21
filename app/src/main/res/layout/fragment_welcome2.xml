@@ -44,9 +44,8 @@
 
     <ImageButton
         android:id="@+id/btn_welcomeP2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?android:selectableItemBackground"
+        android:layout_width="43dp"
+        android:layout_height="51dp"
         android:padding="16dp"
         android:src="@drawable/next"
         app:layout_constraintBottom_toTopOf="@id/skipText2"

@@ -12,13 +12,12 @@
         android:id="@+id/animationImageView"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:contentDescription="@string/todo"
-        android:scaleType="centerCrop"
         android:src="@drawable/logo"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ImageContrastCheck" />
+        android:contentDescription="Todo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

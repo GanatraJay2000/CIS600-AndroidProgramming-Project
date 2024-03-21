@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Project" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.TravelEase" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="android:fontFamily">@font/poppins</item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -13,7 +13,6 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
-
     </style>
 
     <style name="Widget.MaterialComponents.Button.Pill" parent="Widget.MaterialComponents.Button">
@@ -34,14 +33,14 @@
         <item name="android:radius">16dp</item> <!-- Adjust the radius value as needed -->
     </style>
 
-    <style name="Theme.Project.NoActionBar">
+    <style name="Theme.TravelEase.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.Project.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.TravelEase.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.Project.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.TravelEase.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 

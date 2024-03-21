@@ -33,17 +33,17 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/cancel"
                 tools:ignore="SpeakableTextPresentCheck"
-                android:contentDescription="@string/todo" />
+                android:contentDescription="Todo" />
 
         </RelativeLayout>
 
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/searchResultsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="8dp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchResultsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 </ScrollView>

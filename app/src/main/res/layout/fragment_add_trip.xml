@@ -5,24 +5,23 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp"
-    tools:context=".helpers.add_trip.AddTripFragment">
+    tools:context=".helper.dialogs.addTrip.AddTripFragment">
 
     <ImageView
         android:id="@+id/closeButton"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:contentDescription="@string/close_button"
         android:src="@drawable/cancel"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="RedundantDescriptionCheck" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="Close Button"/>
 
     <TextView
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="@string/plan_a_new_trip"
+        android:text="Plan a new trip"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/closeButton"
@@ -41,19 +40,18 @@
         app:boxCornerRadiusTopEnd="50dp"
         app:layout_constraintTop_toBottomOf="@id/titleTextView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="ExtraText">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/whereToEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/where_to"
-            android:inputType="text"
-            tools:ignore="TextContrastCheck" />
             android:drawableStart="@drawable/location_on"
             android:hint="Where To?"
-            android:inputType="text"/>
+            android:inputType="none"
+            android:focusable="true"
+            android:clickable="true"
+            android:cursorVisible="false"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
@@ -65,6 +63,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Start Date Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/startDateInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -80,16 +79,17 @@
                 android:id="@+id/startDateEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Start Date"
                 android:focusable="false"
-                android:hint="@string/start_date"
-                android:inputType="none"
-                tools:ignore="TextContrastCheck" />
+                android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Space between the date pickers -->
         <View
             android:layout_width="16dp"
             android:layout_height="0dp" />
 
+        <!-- End Date Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/endDateInputLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -105,24 +105,27 @@
                 android:id="@+id/endDateEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="End Date"
                 android:focusable="false"
-                android:hint="@string/end_date"
-                android:inputType="none"
-                tools:ignore="TextContrastCheck" />
+                android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/startPlanningButton"
+        android:backgroundTint="@color/colorPrimary"
+        android:foregroundTint="@color/white"
+        android:textColor="@color/white"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:cornerRadius="100dp"
+        android:text="Start planning"
         android:layout_marginBottom="24dp"
-        android:text="@string/start_planning"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="TextContrastCheck" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

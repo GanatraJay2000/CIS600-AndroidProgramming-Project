@@ -5,6 +5,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
+    <Button
+        android:id="@+id/addPlaceToDayButton"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:text="Add Place" />
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/itineraryTabs"
         app:tabMode="scrollable"
